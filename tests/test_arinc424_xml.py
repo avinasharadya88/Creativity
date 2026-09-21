@@ -37,11 +37,11 @@ class TestARINC424XML(unittest.TestCase):
         self.assertEqual(root.get("version"), "424-23")
         self.assertEqual(root.get("cycle"), "2609")
 
-        route_node = root.find(".//MilitaryTrainingRoute")
+        route_node = next((e for e in root.iter() if e.tag.endswith("MilitaryTrainingRoute")), None)
         self.assertIsNotNone(route_node)
         self.assertEqual(route_node.get("id"), "IR-102")
 
-        segments = route_node.findall(".//Segment")
+        segments = [s for s in route_node.iter() if s.tag.endswith("Segment")]
         self.assertGreaterEqual(len(segments), 2)
 
     def test_xml_validation_helper(self):

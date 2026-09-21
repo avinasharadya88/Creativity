@@ -312,14 +312,13 @@ class MTRService:
             cursor.execute("""
                 INSERT INTO mtr_routes (
                     route_id, route_type, route_name, originating_agency, artcc_facility,
-                    operating_hours, floor_alt_ft, ceiling_alt_ft, route_width_nm, status, geometry_wkt
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    floor_alt_ft, ceiling_alt_ft, route_width_nm, status, geometry_wkt
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(route_id) DO UPDATE SET
                     route_type = excluded.route_type,
                     route_name = excluded.route_name,
                     originating_agency = excluded.originating_agency,
                     artcc_facility = excluded.artcc_facility,
-                    operating_hours = excluded.operating_hours,
                     floor_alt_ft = excluded.floor_alt_ft,
                     ceiling_alt_ft = excluded.ceiling_alt_ft,
                     route_width_nm = excluded.route_width_nm,
@@ -327,7 +326,7 @@ class MTRService:
                     geometry_wkt = excluded.geometry_wkt
             """, (
                 route_id, route_type, route_name, originating_agency, artcc_facility,
-                operating_hours, floor_alt_ft, ceiling_alt_ft, route_width_nm, status, wkt
+                floor_alt_ft, ceiling_alt_ft, route_width_nm, status, wkt
             ))
 
             # Delete old segments and insert new ones
@@ -356,13 +355,13 @@ class MTRService:
                         route_id, sequence_num, point_name, point_type,
                         latitude_dec, longitude_dec, min_alt_ft, max_alt_ft,
                         width_left_nm, width_right_nm, next_point_name,
-                        next_lat_dec, next_lon_dec, segment_distance_nm, geometry_wkt
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        segment_distance_nm, geometry_wkt
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     route_id, seq_num, pt_name, pt_type,
                     lat1, lon1, min_alt, max_alt,
                     w_left, w_right, next_pt,
-                    next_lat, next_lon, seg_dist, seg_wkt
+                    seg_dist, seg_wkt
                 ))
 
             conn.commit()

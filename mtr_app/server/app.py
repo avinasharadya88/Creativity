@@ -1,6 +1,6 @@
 """
 Lightweight REST API Server and Static Asset Handler for MTR Application.
-Zero-dependency implementation built on Python's native http.server.
+Built on Python's native http.server BaseHTTPRequestHandler.
 """
 
 import http.server
@@ -15,10 +15,10 @@ from mtr_app.generators.arinc424_xml import validate_arinc424_xml
 STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "static")
 
 
-class MTRRequestHandler(http.server.SimpleHTTPRequestHandler):
+class MTRRequestHandler(http.server.BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self.service = MTRService()
-        super().__init__(*args, directory=STATIC_DIR, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def do_OPTIONS(self):
         """Handle CORS pre-flight requests."""
@@ -47,6 +47,41 @@ class MTRRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def _serve_static(self, rel_path: str):
+        if rel_path == "" or rel_path == "/":
+            rel_path = "/index.html"
+        
+        safe_path = os.path.normpath(rel_path.lstrip("/"))
+        file_path = os.path.join(STATIC_DIR, safe_path)
+        
+        if not os.path.exists(file_path) or os.path.isdir(file_path):
+            self._send_json({"error": f"File '{rel_path}' not found"}, status=404)
+            return
+
+        mime_types = {
+            ".html": "text/html; charset=utf-8",
+            ".css": "text/css; charset=utf-8",
+            ".js": "application/javascript; charset=utf-8",
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".svg": "image/svg+xml",
+            ".json": "application/json"
+        }
+        ext = os.path.splitext(file_path)[1].lower()
+        content_type = mime_types.get(ext, "application/octet-stream")
+
+        try:
+            with open(file_path, "rb") as f:
+                content = f.read()
+
+            self.send_response(200)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(content)))
+            self.end_headers()
+            self.wfile.write(content)
+        except Exception as e:
+            self._send_json({"error": f"Failed to read file: {str(e)}"}, status=500)
 
     def do_GET(self):
         parsed_url = urllib.parse.urlparse(self.path)
@@ -129,10 +164,8 @@ class MTRRequestHandler(http.server.SimpleHTTPRequestHandler):
                     self._send_text(brief, content_type="text/plain; charset=utf-8")
                     return
 
-        # 6. Fallback: Serve static assets or index.html
-        if path == "" or path == "/index.html":
-            self.path = "/index.html"
-        return super().do_GET()
+        # 6. Serve static assets or index.html
+        self._serve_static(parsed_url.path)
 
     def do_POST(self):
         parsed_url = urllib.parse.urlparse(self.path)
@@ -161,7 +194,6 @@ class MTRRequestHandler(http.server.SimpleHTTPRequestHandler):
         # 2. API: Convert payload on-the-fly without database modification
         if path == "/api/convert":
             try:
-                # Payload can be route dictionary
                 from mtr_app.generators.arinc424_xml import generate_single_route_xml, decode_to_plain_english
                 from mtr_app.generators.arinc424_fixed import generate_mtr_fixed_records
                 from mtr_app.generators.corridor_calc import generate_corridor_polygon
@@ -187,15 +219,15 @@ class MTRRequestHandler(http.server.SimpleHTTPRequestHandler):
         self._send_json({"error": "Endpoint not found"}, status=404)
 
 
-def create_server(port: int = 8080) -> socketserver.TCPServer:
+def create_server(host: str = "127.0.0.1", port: int = 8080) -> socketserver.TCPServer:
     socketserver.TCPServer.allow_reuse_address = True
-    server = socketserver.TCPServer(("", port), MTRRequestHandler)
+    server = socketserver.TCPServer((host, port), MTRRequestHandler)
     return server
 
 
-def run_server(port: int = 8080):
-    server = create_server(port)
-    print(f"🚀 MTR ARINC 424-23 Application Server listening on http://localhost:{port}")
+def run_server(host: str = "127.0.0.1", port: int = 8080):
+    server = create_server(host=host, port=port)
+    print(f"🚀 MTR ARINC 424-23 Application Server listening on http://{host}:{port}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

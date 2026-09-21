@@ -232,14 +232,14 @@ def validate_arinc424_xml(xml_content: str) -> Dict[str, Any]:
         if version != ARINC_VERSION:
             return {"valid": False, "error": f"Expected version {ARINC_VERSION}, got '{version}'"}
 
-        routes = root.findall(".//MilitaryTrainingRoute")
+        routes = [e for e in root.iter() if e.tag.endswith("MilitaryTrainingRoute")]
         if not routes:
             return {"valid": False, "error": "No MilitaryTrainingRoute elements found in XML"}
 
         report_routes = []
         for r in routes:
             r_id = r.get("id", "UNKNOWN")
-            segments = r.findall(".//Segment")
+            segments = [s for s in r.iter() if s.tag.endswith("Segment")]
             report_routes.append({
                 "route_id": r_id,
                 "status": r.get("status"),

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eNASR to ARINC 424-23 MTR Explorer</title>
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-icon">✈</div>
+      <div class="title-group">
+        <h1>eNASR <span class="accent-arrow">➔</span> ARINC 424-23 MTR Explorer</h1>
+        <p class="subtitle">Military Training Route Translation, Corridor Modeling & Aeronautical Visualization</p>
+      </div>
+    </div>
+    
+    <div class="header-badges">
+      <span class="badge badge-cycle">FAA AIRAC 2609</span>
+      <span class="badge badge-arinc">ARINC 424-23</span>
+      <span class="badge badge-sqlite">SQLite Spatial</span>
+    </div>
+
+    <div class="header-actions">
+      <button id="btnNewRoute" class="btn btn-primary">＋ New / Import MTR</button>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" id="btnExportAll">Export All ▾</button>
+        <div class="dropdown-menu" id="exportAllMenu">
+          <a href="/api/all/arinc424-xml?download=true" target="_blank">ARINC 424-23 XML (.xml)</a>
+          <a href="/api/all/arinc424-fixed?download=true" target="_blank">ARINC 424 Fixed-Width (.dat)</a>
+          <a href="/api/all/geojson" target="_blank">GeoJSON (.geojson)</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Dashboard Container -->
+  <main class="dashboard-container">
+    
+    <!-- LEFT PANEL: Route Directory & Filters -->
+    <aside class="panel panel-left">
+      <div class="panel-section-header">
+        <h2>Military Training Routes</h2>
+        <span class="route-count-badge" id="routeCountBadge">0</span>
+      </div>
+
+      <!-- Search & Filter Controls -->
+      <div class="search-box">
+        <input type="text" id="routeSearchInput" placeholder="Search route ID, base, ARTCC..." autocomplete="off">
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="filter-btn active" data-filter="ALL">ALL</button>
+        <button class="filter-btn" data-filter="IR">IR (IFR)</button>
+        <button class="filter-btn" data-filter="VR">VR (VFR)</button>
+        <button class="filter-btn" data-filter="SR">SR (Slow)</button>
+      </div>
+
+      <!-- Route Cards List -->
+      <div class="route-list" id="routeList">
+        <div class="loading-spinner">Loading MTR routes from eNASR database...</div>
+      </div>
+
+      <!-- Selected Route Summary Card -->
+      <div class="route-summary-card" id="routeSummaryCard" style="display: none;">
+        <div class="summary-header">
+          <h3 id="summaryRouteId">IR-102</h3>
+          <span class="badge" id="summaryRouteType">IR</span>
+        </div>
+        <p class="summary-name" id="summaryRouteName">Mojave Desert Low Altitude Corridor</p>
+        
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="lbl">Agency</span>
+            <span class="val" id="summaryAgency">USAF</span>
+          </div>
+          <div class="summary-item">
+            <span class="lbl">ARTCC</span>
+            <span class="val" id="summaryArtcc">ZLA</span>
+          </div>
+          <div class="summary-item">
+            <span class="lbl">Altitude</span>
+            <span class="val" id="summaryAlt">100 - 15,000 ft</span>
+          </div>
+          <div class="summary-item">
+            <span class="lbl">Corridor</span>
+            <span class="val" id="summaryWidth">10.0 NM</span>
+          </div>
+          <div class="summary-item">
+            <span class="lbl">Distance</span>
+            <span class="val" id="summaryDistance">62.7 NM</span>
+          </div>
+          <div class="summary-item">
+            <span class="lbl">Hours</span>
+            <span class="val" id="summaryHours">CONTINUOUS</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER PANEL: Interactive Map & Altitude Profile -->
+    <section class="panel panel-center">
+      <!-- Map Controls Bar -->
+      <div class="map-controls-bar">
+        <div class="map-title-group">
+          <span class="active-route-indicator" id="mapRouteTitle">Select a route</span>
+          <span class="map-sub-info" id="mapRouteInfo"></span>
+        </div>
+        
+        <div class="map-toggles">
+          <label class="toggle-control">
+            <input type="checkbox" id="toggleCorridor" checked>
+            <span>Corridor Ribbon (NM)</span>
+          </label>
+          <label class="toggle-control">
+            <input type="checkbox" id="toggleWaypoints" checked>
+            <span>Waypoints</span>
+          </label>
+          <button class="btn-xs" id="btnFitBounds" title="Fit to route bounds">Fit View</button>
+        </div>
+      </div>
+
+      <!-- Map Container -->
+      <div id="mapContainer"></div>
+
+      <!-- Vertical Altitude Profile Section -->
+      <div class="altitude-profile-container">
+        <div class="profile-header">
+          <div class="profile-title">
+            <span>Vertical Altitude Profile (Floor & Ceiling vs. Distance)</span>
+            <span class="profile-legend">
+              <span class="legend-box legend-ceiling"></span> Ceiling (MSL)
+              <span class="legend-box legend-envelope"></span> Flight Corridor
+              <span class="legend-box legend-floor"></span> Floor (MSL/AGL)
+            </span>
+          </div>
+          <span class="profile-units" id="profileStats">Total Distance: 0 NM</span>
+        </div>
+        <div class="profile-canvas-wrapper">
+          <canvas id="profileCanvas"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: ARINC 424-23 & Plain English Inspector -->
+    <aside class="panel panel-right">
+      <!-- Tabs Selector -->
+      <div class="inspector-tabs">
+        <button class="tab-btn active" data-tab="tabXml">ARINC 424-23 XML</button>
+        <button class="tab-btn" data-tab="tabPlain">Plain English Brief</button>
+        <button class="tab-btn" data-tab="tabFixed">ARINC Fixed (132)</button>
+        <button class="tab-btn" data-tab="tabTable">Legs Table</button>
+      </div>
+
+      <!-- Tab 1: ARINC 424-23 XML -->
+      <div class="tab-content active" id="tabXml">
+        <div class="tab-toolbar">
+          <span class="xml-status-badge valid" id="xmlValidationBadge">✓ ARINC 424-23 Valid</span>
+          <div class="toolbar-actions">
+            <button class="btn-xs" id="btnCopyXml">Copy XML</button>
+            <button class="btn-xs btn-primary-xs" id="btnDownloadXml">Download .xml</button>
+          </div>
+        </div>
+        <pre class="code-block" id="xmlCodeContent"><code>Loading XML...</code></pre>
+      </div>
+
+      <!-- Tab 2: Plain-English Flight Brief -->
+      <div class="tab-content" id="tabPlain">
+        <div class="tab-toolbar">
+          <span class="text-muted">Human-Readable Operational Translation</span>
+          <button class="btn-xs" id="btnCopyPlain">Copy Brief</button>
+        </div>
+        <pre class="plain-english-block" id="plainEnglishContent">Select a route to view operational flight brief...</pre>
+      </div>
+
+      <!-- Tab 3: ARINC 424 132-Column Fixed Records -->
+      <div class="tab-content" id="tabFixed">
+        <div class="tab-toolbar">
+          <span class="fixed-status-badge" id="fixedLengthBadge">Length: 132 bytes/line</span>
+          <div class="toolbar-actions">
+            <button class="btn-xs" id="btnCopyFixed">Copy</button>
+            <button class="btn-xs btn-primary-xs" id="btnDownloadFixed">Download .dat</button>
+          </div>
+        </div>
+        <div class="column-guide">
+          <code>1--------10--------20--------30--------40--------50--------60--------70--------80--------90--------100-------110-------120-------132</code>
+        </div>
+        <pre class="code-block fixed-block" id="fixedCodeContent">Loading ARINC 424 fixed records...</pre>
+      </div>
+
+      <!-- Tab 4: Waypoint Legs Table -->
+      <div class="tab-content" id="tabTable">
+        <div class="tab-toolbar">
+          <span class="text-muted">Route Segment Sequence</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table" id="segmentsTable">
+            <thead>
+              <tr>
+                <th>Seq</th>
+                <th>Point</th>
+                <th>Type</th>
+                <th>Term</th>
+                <th>Alt Limits</th>
+                <th>Corridor</th>
+                <th>Dist</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="7" class="text-center">No route selected</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- MODAL: Create or Import New MTR -->
+  <div class="modal-overlay" id="routeModal" style="display: none;">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>Create / Import Military Training Route (MTR)</h3>
+        <button class="modal-close" id="btnCloseModal">✕</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="modal-tabs">
+          <button class="modal-tab-btn active" data-modaltab="tabForm">Manual Form</button>
+          <button class="modal-tab-btn" data-modaltab="tabJson">Paste JSON / GeoJSON</button>
+        </div>
+
+        <!-- Manual Input Form -->
+        <div class="modal-tab-content active" id="tabForm">
+          <form id="newRouteForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fRouteId">Route Identifier *</label>
+                <input type="text" id="fRouteId" placeholder="e.g. IR-104 or VR-1234" required>
+              </div>
+              <div class="form-group">
+                <label for="fRouteType">Route Type *</label>
+                <select id="fRouteType" required>
+                  <option value="IR">IR (IFR Military Training Route)</option>
+                  <option value="VR">VR (VFR Military Training Route)</option>
+                  <option value="SR">SR (Slow Speed Low Altitude Route)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="fRouteName">Route Full Name / Description *</label>
+              <input type="text" id="fRouteName" placeholder="e.g. High Desert Low Altitude Route" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fAgency">Originating Military Agency *</label>
+                <input type="text" id="fAgency" placeholder="e.g. USAF / Nellis AFB" required>
+              </div>
+              <div class="form-group">
+                <label for="fArtcc">Controlling ARTCC *</label>
+                <input type="text" id="fArtcc" placeholder="e.g. ZLA - Los Angeles ARTCC" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fFloorAlt">Floor Altitude (ft MSL) *</label>
+                <input type="number" id="fFloorAlt" value="200" required>
+              </div>
+              <div class="form-group">
+                <label for="fCeilingAlt">Ceiling Altitude (ft MSL) *</label>
+                <input type="number" id="fCeilingAlt" value="10000" required>
+              </div>
+              <div class="form-group">
+                <label for="fWidth">Corridor Width (NM) *</label>
+                <input type="number" step="0.5" id="fWidth" value="10.0" required>
+              </div>
+            </div>
+
+            <div class="form-section-title">
+              <h4>Route Waypoints (Sequenced)</h4>
+              <button type="button" class="btn-xs" id="btnAddWaypointRow">＋ Add Waypoint</button>
+            </div>
+
+            <div class="waypoint-rows-container" id="waypointRows">
+              <!-- Waypoint rows populated via JS -->
+            </div>
+          </form>
+        </div>
+
+        <!-- JSON / GeoJSON Import -->
+        <div class="modal-tab-content" id="tabJson">
+          <p class="text-sm text-muted">Paste a GeoJSON Feature or eNASR route JSON object below:</p>
+          <textarea id="jsonImportArea" rows="14" placeholder='{
+  "route_id": "IR-104",
+  "route_type": "IR",
+  "route_name": "Mojave Desert Corridor",
+  "originating_agency": "USAF / Edwards AFB",
+  "artcc_facility": "ZLA - Los Angeles ARTCC",
+  "floor_alt_ft": 200,
+  "ceiling_alt_ft": 12000,
+  "route_width_nm": 10.0,
+  "segments": [
+    {
+      "sequence_num": 1,
+      "point_name": "PT_A",
+      "point_type": "ENTRY",
+      "latitude_dec": 35.12,
+      "longitude_dec": -116.89,
+      "min_alt_ft": 200,
+      "max_alt_ft": 12000,
+      "width_left_nm": 5.0,
+      "width_right_nm": 5.0
+    }
+  ]
+}'></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnCancelModal">Cancel</button>
+        <button class="btn btn-primary" id="btnSaveRoute">Save & Translate to ARINC 424-23</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- App JS Modules -->
+  <script src="js/map.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

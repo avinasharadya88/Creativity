@@ -37,16 +37,16 @@ class TestServiceAndAPI(unittest.TestCase):
         ir_routes = self.service.list_routes(route_type="IR")
         self.assertTrue(all(r["route_type"] == "IR" for r in ir_routes))
 
-        ir102 = self.service.get_route_details("IR-102")
-        self.assertIsNotNone(ir102)
-        self.assertEqual(ir102["route_id"], "IR-102")
-        self.assertIn("corridor_polygon", ir102)
-        self.assertGreater(len(ir102["corridor_polygon"]), 0)
+        ir200 = self.service.get_route_details("IR-200")
+        self.assertIsNotNone(ir200)
+        self.assertEqual(ir200["route_id"], "IR-200")
+        self.assertIn("corridor_polygon", ir200)
+        self.assertGreater(len(ir200["corridor_polygon"]), 0)
 
     def test_service_geojson(self):
-        geojson = self.service.get_route_geojson("IR-102")
+        geojson = self.service.get_route_geojson("IR-200")
         self.assertEqual(geojson["type"], "FeatureCollection")
-        self.assertEqual(geojson["route_id"], "IR-102")
+        self.assertEqual(geojson["route_id"], "IR-200")
         
         feature_types = [f["properties"]["feature_type"] for f in geojson["features"]]
         self.assertIn("CENTERLINE", feature_types)
@@ -101,7 +101,7 @@ class TestServiceAndAPI(unittest.TestCase):
             handler = MTRRequestHandler(sock, ("127.0.0.1", 12345), DummyServer())
             output = sock.wfile.getvalue().decode("utf-8")
             self.assertIn("200 OK", output)
-            self.assertIn("IR-102", output)
+            self.assertIn("IR-200", output)
         except Exception:
             # Under some environments socket init may raise; verify service directly
             routes = self.service.list_routes()

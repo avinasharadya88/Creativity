@@ -15,7 +15,7 @@ class TestARINC424Fixed(unittest.TestCase):
         self.service = MTRService()
 
     def test_record_length_exactly_132_bytes(self):
-        routes = ["IR-102", "VR-223", "SR-301"]
+        routes = ["IR-200", "VR-1254", "SR-101"]
         for r_id in routes:
             route = self.service.get_route_details(r_id)
             self.assertIsNotNone(route)

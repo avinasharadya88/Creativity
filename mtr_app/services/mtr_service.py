@@ -26,6 +26,8 @@ from mtr_app.generators.arinc424_fixed import (
     generate_all_fixed_records
 )
 
+from mtr_app.services.supabase_service import SupabaseService, load_env_file
+
 DEFAULT_DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "enasr-geospatial.db")
 
 
@@ -33,6 +35,7 @@ class MTRService:
     def __init__(self, db_path: Optional[str] = None):
         self.db_path = db_path or DEFAULT_DB_PATH
         self._ensure_db_initialized()
+        self.supabase = SupabaseService()
 
     def _get_connection(self) -> sqlite3.Connection:
         conn = sqlite3.connect(self.db_path)
@@ -56,7 +59,15 @@ class MTRService:
             conn.close()
 
     def list_routes(self, route_type: Optional[str] = None) -> List[Dict[str, Any]]:
-        """List all MTR routes with summary statistics."""
+        """List all MTR routes with summary statistics (Supabase if configured, SQLite fallback)."""
+        if self.supabase.is_configured():
+            try:
+                sb_routes = self.supabase.list_routes(route_type=route_type)
+                if sb_routes:
+                    return sb_routes
+            except Exception as e:
+                print(f"[Warning] Supabase fetch failed: {e}. Falling back to SQLite.")
+
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
@@ -84,71 +95,84 @@ class MTRService:
 
     def get_route_details(self, route_id: str) -> Optional[Dict[str, Any]]:
         """Fetch full details for an MTR route, enriched with segment bearings and corridor polygon."""
-        conn = self._get_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM mtr_routes WHERE route_id = ?", (route_id,))
-            row = cursor.fetchone()
-            if not row:
-                return None
-            
-            route = dict(row)
-            cursor.execute("SELECT * FROM mtr_segments WHERE route_id = ? ORDER BY sequence_num", (route_id,))
-            raw_segments = [dict(s) for s in cursor.fetchall()]
+        route = None
+        raw_segments = []
 
-            # Enrich segments
-            enriched_segments = []
-            cumulative_nm = 0.0
+        if self.supabase.is_configured():
+            try:
+                sb_route = self.supabase.get_route_details(route_id)
+                if sb_route:
+                    route = sb_route
+                    raw_segments = route.get("segments", [])
+            except Exception as e:
+                print(f"[Warning] Supabase route fetch failed: {e}. Falling back to SQLite.")
 
-            for i, seg in enumerate(raw_segments):
-                seg_dict = dict(seg)
-                lat1 = seg_dict.get("latitude_dec", 0.0)
-                lon1 = seg_dict.get("longitude_dec", 0.0)
+        if not route:
+            conn = self._get_connection()
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM mtr_routes WHERE route_id = ?", (route_id,))
+                row = cursor.fetchone()
+                if not row:
+                    return None
+                
+                route = dict(row)
+                cursor.execute("SELECT * FROM mtr_segments WHERE route_id = ? ORDER BY sequence_num", (route_id,))
+                raw_segments = [dict(s) for s in cursor.fetchall()]
+            finally:
+                conn.close()
 
-                # Determine next coordinates if missing
-                lat2 = seg_dict.get("next_lat_dec")
-                lon2 = seg_dict.get("next_lon_dec")
-                if (lat2 is None or lon2 is None) and i + 1 < len(raw_segments):
-                    lat2 = raw_segments[i + 1].get("latitude_dec")
-                    lon2 = raw_segments[i + 1].get("longitude_dec")
-                    seg_dict["next_lat_dec"] = lat2
-                    seg_dict["next_lon_dec"] = lon2
-                    if not seg_dict.get("next_point_name"):
-                        seg_dict["next_point_name"] = raw_segments[i + 1].get("point_name")
+        # Enrich segments
+        enriched_segments = []
+        cumulative_nm = 0.0
 
-                # Distance and Bearing
-                dist = seg_dict.get("segment_distance_nm")
-                if lat2 is not None and lon2 is not None:
-                    bearing = calculate_bearing(lat1, lon1, lat2, lon2)
-                    seg_dict["bearing_deg"] = bearing
-                    if dist is None:
-                        dist = calculate_distance_nm(lat1, lon1, lat2, lon2)
-                        seg_dict["segment_distance_nm"] = dist
+        for i, seg in enumerate(raw_segments):
+            seg_dict = dict(seg)
+            lat1 = seg_dict.get("latitude_dec", 0.0)
+            lon1 = seg_dict.get("longitude_dec", 0.0)
 
-                dist_val = dist if dist is not None else 0.0
-                seg_dict["cumulative_distance_nm"] = round(cumulative_nm, 1)
-                cumulative_nm += dist_val
+            # Determine next coordinates if missing
+            lat2 = seg_dict.get("next_lat_dec")
+            lon2 = seg_dict.get("next_lon_dec")
+            if (lat2 is None or lon2 is None) and i + 1 < len(raw_segments):
+                lat2 = raw_segments[i + 1].get("latitude_dec")
+                lon2 = raw_segments[i + 1].get("longitude_dec")
+                seg_dict["next_lat_dec"] = lat2
+                seg_dict["next_lon_dec"] = lon2
+                if not seg_dict.get("next_point_name"):
+                    seg_dict["next_point_name"] = raw_segments[i + 1].get("point_name")
 
-                # Coordinate strings
-                arinc_lat, arinc_lon = to_arinc_dms(lat1, lon1)
-                human_lat, human_lon = to_human_dms(lat1, lon1)
-                seg_dict["arinc_lat"] = arinc_lat
-                seg_dict["arinc_lon"] = arinc_lon
-                seg_dict["human_lat"] = human_lat
-                seg_dict["human_lon"] = human_lon
+            # Distance and Bearing
+            dist = seg_dict.get("segment_distance_nm")
+            if lat2 is not None and lon2 is not None:
+                bearing = calculate_bearing(lat1, lon1, lat2, lon2)
+                seg_dict["bearing_deg"] = bearing
+                if dist is None:
+                    dist = calculate_distance_nm(lat1, lon1, lat2, lon2)
+                    seg_dict["segment_distance_nm"] = dist
 
-                enriched_segments.append(seg_dict)
+            dist_val = dist if dist is not None else 0.0
+            seg_dict["cumulative_distance_nm"] = round(cumulative_nm, 1)
+            cumulative_nm += dist_val
 
-            route["segments"] = enriched_segments
-            route["total_distance_nm"] = round(cumulative_nm, 1)
+            # Coordinate strings
+            arinc_lat, arinc_lon = to_arinc_dms(lat1, lon1)
+            human_lat, human_lon = to_human_dms(lat1, lon1)
+            seg_dict["arinc_lat"] = arinc_lat
+            seg_dict["arinc_lon"] = arinc_lon
+            seg_dict["human_lat"] = human_lat
+            seg_dict["human_lon"] = human_lon
 
-            # Generate corridor polygon
-            corridor_poly = generate_corridor_polygon(enriched_segments)
-            route["corridor_polygon"] = corridor_poly
+            enriched_segments.append(seg_dict)
 
-            return route
-        finally:
-            conn.close()
+        route["segments"] = enriched_segments
+        route["total_distance_nm"] = round(cumulative_nm, 1)
+
+        # Generate corridor polygon
+        corridor_poly = generate_corridor_polygon(enriched_segments)
+        route["corridor_polygon"] = corridor_poly
+
+        return route
 
     def get_route_geojson(self, route_id: str) -> Optional[Dict[str, Any]]:
         """Returns a GeoJSON FeatureCollection for a single MTR route with Centerline, Corridor, and Waypoints."""
@@ -305,6 +329,12 @@ class MTRService:
         for s in segments:
             wkt_coords.append(f"{s['longitude_dec']} {s['latitude_dec']}")
         wkt = f"LINESTRING({', '.join(wkt_coords)})" if wkt_coords else None
+
+        if self.supabase.is_configured():
+            try:
+                self.supabase.create_or_update_route(route_data)
+            except Exception as e:
+                print(f"[Warning] Supabase sync failed: {e}")
 
         conn = self._get_connection()
         try:

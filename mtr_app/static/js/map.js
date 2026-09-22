@@ -25,12 +25,12 @@ class MTRMap {
       attributionControl: false
     }).setView([35.5, -117.5], 7);
 
-    // Esri World Dark Gray Base (No API key required)
-    const darkTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 16,
-      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
+    // OpenStreetMap Standard (Light Mode, Open Source, No API Key)
+    const lightTileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     });
-    darkTileLayer.addTo(this.map);
+    lightTileLayer.addTo(this.map);
 
     // Create Layer Groups
     this.corridorLayer = L.layerGroup().addTo(this.map);
@@ -51,9 +51,9 @@ class MTRMap {
 
     const segments = routeDetails.segments;
     const isIFR = (routeDetails.route_type || "").toUpperCase() === "IR";
-    const primaryColor = isIFR ? "#38bdf8" : "#10b981"; // Cyan for IFR, Emerald for VFR
-    const corridorFill = isIFR ? "rgba(56, 189, 248, 0.22)" : "rgba(16, 185, 129, 0.22)";
-    const corridorBorder = isIFR ? "rgba(56, 189, 248, 0.6)" : "rgba(16, 185, 129, 0.6)";
+    const primaryColor = isIFR ? "#2563eb" : "#059669"; // Dark Blue for IFR, Dark Green for VFR
+    const corridorFill = isIFR ? "rgba(37, 99, 235, 0.22)" : "rgba(5, 150, 105, 0.22)";
+    const corridorBorder = isIFR ? "rgba(37, 99, 235, 0.6)" : "rgba(5, 150, 105, 0.6)";
 
     const latLngs = [];
 

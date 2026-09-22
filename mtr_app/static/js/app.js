@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentFilter = 'ALL';
   let currentSearch = '';
   let selectedRouteId = null;
+  let currentActiveRouteDetails = null;
 
   // DOM Elements
   const routeListEl = document.getElementById('routeList');
@@ -152,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch(`/api/routes/${encodeURIComponent(routeId)}`);
       if (!res.ok) throw new Error('Route not found');
       const route = await res.json();
+      currentActiveRouteDetails = route;
 
       // 2. Update Summary Card
       summaryCard.style.display = 'block';
@@ -351,14 +353,71 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // -------------------------------------------------------------
-  // 4. Modal: Create / Import New MTR
+  // 4. Modal: Create / Edit / Import MTR
   // -------------------------------------------------------------
-  btnNewRoute.addEventListener('click', () => {
-    routeModal.style.display = 'flex';
-    if (waypointRowsContainer.children.length === 0) {
+  const btnEditRoute = document.getElementById('btnEditRoute');
+  const btnEditActiveRoute = document.getElementById('btnEditActiveRoute');
+  const modalTitle = document.getElementById('modalTitle');
+
+  function openEditModal(route) {
+    if (!route) {
+      alert('Please select a route first to edit.');
+      return;
+    }
+
+    if (modalTitle) modalTitle.textContent = `Edit MTR Route: ${route.route_id}`;
+    document.getElementById('fRouteId').value = route.route_id;
+    document.getElementById('fRouteType').value = route.route_type || 'IR';
+    document.getElementById('fRouteName').value = route.route_name || '';
+    document.getElementById('fAgency').value = route.originating_agency || '';
+    document.getElementById('fArtcc').value = route.artcc_facility || '';
+    document.getElementById('fFloorAlt').value = route.floor_alt_ft || 200;
+    document.getElementById('fCeilingAlt').value = route.ceiling_alt_ft || 10000;
+    document.getElementById('fWidth').value = route.route_width_nm || 10.0;
+
+    waypointRowsContainer.innerHTML = '';
+    const segments = route.segments || [];
+    if (segments.length === 0) {
       addWaypointRow(1, 'PT_ENTRY', 'ENTRY', 35.0, -117.5);
       addWaypointRow(2, 'PT_EXIT', 'EXIT', 35.5, -117.0);
+    } else {
+      segments.forEach((seg, idx) => {
+        addWaypointRow(
+          seg.sequence_num || idx + 1,
+          seg.point_name || `PT_${idx + 1}`,
+          seg.point_type || (idx === 0 ? 'ENTRY' : (idx === segments.length - 1 ? 'EXIT' : 'WAYPOINT')),
+          seg.latitude_dec,
+          seg.longitude_dec
+        );
+      });
     }
+
+    btnSaveRoute.textContent = 'Save Changes to Backend';
+    routeModal.style.display = 'flex';
+  }
+
+  if (btnEditRoute) {
+    btnEditRoute.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openEditModal(currentActiveRouteDetails);
+    });
+  }
+
+  if (btnEditActiveRoute) {
+    btnEditActiveRoute.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openEditModal(currentActiveRouteDetails);
+    });
+  }
+
+  btnNewRoute.addEventListener('click', () => {
+    if (modalTitle) modalTitle.textContent = 'Create / Import Military Training Route (MTR)';
+    document.getElementById('newRouteForm').reset();
+    waypointRowsContainer.innerHTML = '';
+    addWaypointRow(1, 'PT_ENTRY', 'ENTRY', 35.0, -117.5);
+    addWaypointRow(2, 'PT_EXIT', 'EXIT', 35.5, -117.0);
+    btnSaveRoute.textContent = 'Save & Translate to ARINC 424-23';
+    routeModal.style.display = 'flex';
   });
 
   function closeModal() {

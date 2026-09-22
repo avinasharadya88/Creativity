@@ -15,16 +15,19 @@ DEFAULT_SUPABASE_URL = "https://ahmpkflqibikzhfiecgo.supabase.co"
 
 def load_env_file(filepath: str):
     """Simple parser for .env files without requiring python-dotenv."""
-    if os.path.exists(filepath):
-        with open(filepath, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith("#") and "=" in line:
-                    key, value = line.split("=", 1)
-                    key = key.strip()
-                    value = value.strip().strip("'").strip('"')
-                    if key not in os.environ:
-                        os.environ[key] = value
+    try:
+        if os.path.exists(filepath):
+            with open(filepath, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        key, value = line.split("=", 1)
+                        key = key.strip()
+                        value = value.strip().strip("'").strip('"')
+                        if key not in os.environ:
+                            os.environ[key] = value
+    except Exception:
+        pass
 
 
 # Attempt to load credentials from ~/.env and local .env

@@ -25,10 +25,10 @@ class MTRMap {
       attributionControl: false
     }).setView([35.5, -117.5], 7);
 
-    // CartoDB Dark Matter Basemap
-    const darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19,
-      subdomains: 'abcd'
+    // Esri World Dark Gray Base (No API key required)
+    const darkTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 16,
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
     });
     darkTileLayer.addTo(this.map);
 

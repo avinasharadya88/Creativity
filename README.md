@@ -83,3 +83,5 @@ python3 mtr_cli.py --validate
 - **`mtr_app/generators/corridor_calc.py`**: Geodesy math, distances, bearings, and corridor buffer polygon generation.
 - **`mtr_app/server/app.py`**: Native Python HTTP server for the REST API and static web assets.
 - **`mtr_app/static/`**: Client-side HTML, CSS, and JS for the web dashboard.
+
+Note: The sample data used for the analysis and rendering is AIRAC Cycle 2609 from eNASR data source.

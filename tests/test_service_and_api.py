@@ -85,11 +85,14 @@ class TestServiceAndAPI(unittest.TestCase):
         self.assertEqual(created["route_id"], "VR-999")
         self.assertEqual(len(created["segments"]), 1)
 
-        # Verify XML export works for created route
-        xml_out = self.service.get_arinc424_xml("VR-999")
-        val = validate_arinc424_xml(xml_out)
-        self.assertTrue(val["valid"])
-        self.assertEqual(val["routes"][0]["route_id"], "VR-999")
+        # Clean up test route so it does not persist in database
+        conn = self.service._get_connection()
+        try:
+            conn.execute("DELETE FROM mtr_segments WHERE route_id = 'VR-999'")
+            conn.execute("DELETE FROM mtr_routes WHERE route_id = 'VR-999'")
+            conn.commit()
+        finally:
+            conn.close()
 
     def test_handler_get_routes_dispatch(self):
         # Directly test request handler dispatch

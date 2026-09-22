@@ -1,0 +1,8 @@
+{
+  "name": "eNASR to ARINC 424-23 MTR Explorer",
+  "description": "Military Training Route Translation, Corridor Modeling & Aeronautical Visualization",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

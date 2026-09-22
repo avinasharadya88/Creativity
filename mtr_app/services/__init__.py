@@ -1,3 +1,0 @@
-"""
-MTR App Services Package
-"""

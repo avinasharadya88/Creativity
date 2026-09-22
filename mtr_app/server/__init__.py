@@ -1,3 +1,0 @@
-"""
-MTR Server Package
-"""

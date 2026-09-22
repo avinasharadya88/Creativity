@@ -1,0 +1,2724 @@
+[
+  {
+    "route_id": "IR-107",
+    "route_type": "IR",
+    "route_name": "IR-107 Southwestern New Mexico Range Corridor",
+    "originating_agency": "USAF / Cannon AFB (27th SOW)",
+    "artcc_facility": "ZAB",
+    "floor_alt_ft": 300,
+    "ceiling_alt_ft": 14000,
+    "route_width_nm": 10.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-104.5211 34.3312, -105.1211 33.8512, -105.7812 33.2512)",
+    "segments": [
+      {
+        "segment_id": 27,
+        "route_id": "IR-107",
+        "sequence_num": 1,
+        "point_name": "IR107_ALPHA",
+        "point_type": "ENTRY",
+        "latitude_dec": 34.3312,
+        "longitude_dec": -104.5211,
+        "min_alt_ft": 300,
+        "max_alt_ft": 10000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "IR107_BRAVO",
+        "segment_distance_nm": 46.5,
+        "geometry_wkt": null,
+        "next_lat_dec": 33.8512,
+        "next_lon_dec": -105.1211,
+        "bearing_deg": 226.16,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "34195232N",
+        "arinc_lon": "104311596W",
+        "human_lat": "34\u00b0 19' 52.32\" N",
+        "human_lon": "104\u00b0 31' 15.96\" W"
+      },
+      {
+        "segment_id": 28,
+        "route_id": "IR-107",
+        "sequence_num": 2,
+        "point_name": "IR107_BRAVO",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 33.8512,
+        "longitude_dec": -105.1211,
+        "min_alt_ft": 500,
+        "max_alt_ft": 14000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "IR107_CHARLIE",
+        "segment_distance_nm": 51.2,
+        "geometry_wkt": null,
+        "next_lat_dec": 33.2512,
+        "next_lon_dec": -105.7812,
+        "bearing_deg": 222.7,
+        "cumulative_distance_nm": 46.5,
+        "arinc_lat": "33510432N",
+        "arinc_lon": "105071596W",
+        "human_lat": "33\u00b0 51' 04.32\" N",
+        "human_lon": "105\u00b0 07' 15.96\" W"
+      },
+      {
+        "segment_id": 29,
+        "route_id": "IR-107",
+        "sequence_num": 3,
+        "point_name": "IR107_CHARLIE",
+        "point_type": "EXIT",
+        "latitude_dec": 33.2512,
+        "longitude_dec": -105.7812,
+        "min_alt_ft": 500,
+        "max_alt_ft": 14000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 97.7,
+        "arinc_lat": "33150432N",
+        "arinc_lon": "105465232W",
+        "human_lat": "33\u00b0 15' 04.32\" N",
+        "human_lon": "105\u00b0 46' 52.32\" W"
+      }
+    ],
+    "total_distance_nm": 97.7,
+    "corridor_polygon": [
+      [
+        -104.4513,
+        34.271114
+      ],
+      [
+        -105.047455,
+        33.794703
+      ],
+      [
+        -105.708064,
+        33.194703
+      ],
+      [
+        -105.854431,
+        33.307654
+      ],
+      [
+        -105.194842,
+        33.907653
+      ],
+      [
+        -104.591,
+        34.391246
+      ],
+      [
+        -104.4513,
+        34.271114
+      ]
+    ]
+  },
+  {
+    "route_id": "IR-120",
+    "route_type": "IR",
+    "route_name": "IR-120 Pacific Northwest Maritime Tactical Route",
+    "originating_agency": "USN / NAS Whidbey Island",
+    "artcc_facility": "ZSE",
+    "floor_alt_ft": 500,
+    "ceiling_alt_ft": 16000,
+    "route_width_nm": 12.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-123.4512 48.1211, -124.1211 47.5212, -124.5121 46.8512)",
+    "segments": [
+      {
+        "segment_id": 30,
+        "route_id": "IR-120",
+        "sequence_num": 1,
+        "point_name": "IR120_ENTRY",
+        "point_type": "ENTRY",
+        "latitude_dec": 48.1211,
+        "longitude_dec": -123.4512,
+        "min_alt_ft": 500,
+        "max_alt_ft": 12000,
+        "width_left_nm": 6.0,
+        "width_right_nm": 6.0,
+        "next_point_name": "IR120_MID",
+        "segment_distance_nm": 45.8,
+        "geometry_wkt": null,
+        "next_lat_dec": 47.5212,
+        "next_lon_dec": -124.1211,
+        "bearing_deg": 217.11,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "48071596N",
+        "arinc_lon": "123270432W",
+        "human_lat": "48\u00b0 07' 15.96\" N",
+        "human_lon": "123\u00b0 27' 04.32\" W"
+      },
+      {
+        "segment_id": 31,
+        "route_id": "IR-120",
+        "sequence_num": 2,
+        "point_name": "IR120_MID",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 47.5212,
+        "longitude_dec": -124.1211,
+        "min_alt_ft": 500,
+        "max_alt_ft": 16000,
+        "width_left_nm": 6.0,
+        "width_right_nm": 6.0,
+        "next_point_name": "IR120_EXIT",
+        "segment_distance_nm": 43.1,
+        "geometry_wkt": null,
+        "next_lat_dec": 46.8512,
+        "next_lon_dec": -124.5121,
+        "bearing_deg": 201.78,
+        "cumulative_distance_nm": 45.8,
+        "arinc_lat": "47311632N",
+        "arinc_lon": "124071596W",
+        "human_lat": "47\u00b0 31' 16.32\" N",
+        "human_lon": "124\u00b0 07' 15.96\" W"
+      },
+      {
+        "segment_id": 32,
+        "route_id": "IR-120",
+        "sequence_num": 3,
+        "point_name": "IR120_EXIT",
+        "point_type": "EXIT",
+        "latitude_dec": 46.8512,
+        "longitude_dec": -124.5121,
+        "min_alt_ft": 500,
+        "max_alt_ft": 16000,
+        "width_left_nm": 6.0,
+        "width_right_nm": 6.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 88.9,
+        "arinc_lat": "46510432N",
+        "arinc_lon": "124304356W",
+        "human_lat": "46\u00b0 51' 04.32\" N",
+        "human_lon": "124\u00b0 30' 43.56\" W"
+      }
+    ],
+    "total_distance_nm": 88.9,
+    "corridor_polygon": [
+      [
+        -123.331959,
+        48.060744
+      ],
+      [
+        -123.983782,
+        47.484039
+      ],
+      [
+        -124.376502,
+        46.814041
+      ],
+      [
+        -124.647885,
+        46.888199
+      ],
+      [
+        -124.258612,
+        47.558197
+      ],
+      [
+        -123.570722,
+        48.181332
+      ],
+      [
+        -123.331959,
+        48.060744
+      ]
+    ]
+  },
+  {
+    "route_id": "IR-128",
+    "route_type": "IR",
+    "route_name": "IR-128 Montana High Plains IFR Route",
+    "originating_agency": "USAF / Malmstrom AFB",
+    "artcc_facility": "ZLC",
+    "floor_alt_ft": 400,
+    "ceiling_alt_ft": 17000,
+    "route_width_nm": 10.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-111.3512 47.5112, -110.2511 46.8512, -109.1211 46.3211)",
+    "segments": [
+      {
+        "segment_id": 33,
+        "route_id": "IR-128",
+        "sequence_num": 1,
+        "point_name": "IR128_START",
+        "point_type": "ENTRY",
+        "latitude_dec": 47.5112,
+        "longitude_dec": -111.3512,
+        "min_alt_ft": 400,
+        "max_alt_ft": 15000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "IR128_PIVOT",
+        "segment_distance_nm": 62.4,
+        "geometry_wkt": null,
+        "next_lat_dec": 46.8512,
+        "next_lon_dec": -110.2511,
+        "bearing_deg": 131.03,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "47304032N",
+        "arinc_lon": "111210432W",
+        "human_lat": "47\u00b0 30' 40.32\" N",
+        "human_lon": "111\u00b0 21' 04.32\" W"
+      },
+      {
+        "segment_id": 34,
+        "route_id": "IR-128",
+        "sequence_num": 2,
+        "point_name": "IR128_PIVOT",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 46.8512,
+        "longitude_dec": -110.2511,
+        "min_alt_ft": 500,
+        "max_alt_ft": 17000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "IR128_END",
+        "segment_distance_nm": 58.9,
+        "geometry_wkt": null,
+        "next_lat_dec": 46.3211,
+        "next_lon_dec": -109.1211,
+        "bearing_deg": 123.91,
+        "cumulative_distance_nm": 62.4,
+        "arinc_lat": "46510432N",
+        "arinc_lon": "110150396W",
+        "human_lat": "46\u00b0 51' 04.32\" N",
+        "human_lon": "110\u00b0 15' 03.96\" W"
+      },
+      {
+        "segment_id": 35,
+        "route_id": "IR-128",
+        "sequence_num": 3,
+        "point_name": "IR128_END",
+        "point_type": "EXIT",
+        "latitude_dec": 46.3211,
+        "longitude_dec": -109.1211,
+        "min_alt_ft": 500,
+        "max_alt_ft": 17000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 121.3,
+        "arinc_lat": "46191596N",
+        "arinc_lon": "109071596W",
+        "human_lat": "46\u00b0 19' 15.96\" N",
+        "human_lon": "109\u00b0 07' 15.96\" W"
+      }
+    ],
+    "total_distance_nm": 121.3,
+    "corridor_polygon": [
+      [
+        -111.270167,
+        47.573993
+      ],
+      [
+        -110.183079,
+        46.920293
+      ],
+      [
+        -109.053742,
+        46.390193
+      ],
+      [
+        -109.188288,
+        46.251967
+      ],
+      [
+        -110.318946,
+        46.782067
+      ],
+      [
+        -111.432039,
+        47.44835
+      ],
+      [
+        -111.270167,
+        47.573993
+      ]
+    ]
+  },
+  {
+    "route_id": "IR-135",
+    "route_type": "IR",
+    "route_name": "IR-135 Black Hills Tactical Bomber Route",
+    "originating_agency": "USAF / Ellsworth AFB (28th BW)",
+    "artcc_facility": "ZMP",
+    "floor_alt_ft": 300,
+    "ceiling_alt_ft": 16500,
+    "route_width_nm": 10.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-103.1211 44.1512, -102.3412 43.5211, -101.4512 42.9512)",
+    "segments": [
+      {
+        "segment_id": 36,
+        "route_id": "IR-135",
+        "sequence_num": 1,
+        "point_name": "IR135_ENTRY",
+        "point_type": "ENTRY",
+        "latitude_dec": 44.1512,
+        "longitude_dec": -103.1211,
+        "min_alt_ft": 300,
+        "max_alt_ft": 14000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "IR135_MID",
+        "segment_distance_nm": 53.7,
+        "geometry_wkt": null,
+        "next_lat_dec": 43.5211,
+        "next_lon_dec": -102.3412,
+        "bearing_deg": 137.97,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "44090432N",
+        "arinc_lon": "103071596W",
+        "human_lat": "44\u00b0 09' 04.32\" N",
+        "human_lon": "103\u00b0 07' 15.96\" W"
+      },
+      {
+        "segment_id": 37,
+        "route_id": "IR-135",
+        "sequence_num": 2,
+        "point_name": "IR135_MID",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 43.5211,
+        "longitude_dec": -102.3412,
+        "min_alt_ft": 500,
+        "max_alt_ft": 16500,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "IR135_EXIT",
+        "segment_distance_nm": 52.4,
+        "geometry_wkt": null,
+        "next_lat_dec": 42.9512,
+        "next_lon_dec": -101.4512,
+        "bearing_deg": 131.01,
+        "cumulative_distance_nm": 53.7,
+        "arinc_lat": "43311596N",
+        "arinc_lon": "102202832W",
+        "human_lat": "43\u00b0 31' 15.96\" N",
+        "human_lon": "102\u00b0 20' 28.32\" W"
+      },
+      {
+        "segment_id": 38,
+        "route_id": "IR-135",
+        "sequence_num": 3,
+        "point_name": "IR135_EXIT",
+        "point_type": "EXIT",
+        "latitude_dec": 42.9512,
+        "longitude_dec": -101.4512,
+        "min_alt_ft": 500,
+        "max_alt_ft": 16500,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 106.1,
+        "arinc_lat": "42570432N",
+        "arinc_lon": "101270432W",
+        "human_lat": "42\u00b0 57' 04.32\" N",
+        "human_lon": "101\u00b0 27' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 106.1,
+    "corridor_polygon": [
+      [
+        -103.034806,
+        44.206923
+      ],
+      [
+        -102.265761,
+        43.583916
+      ],
+      [
+        -101.376464,
+        43.014016
+      ],
+      [
+        -101.525783,
+        42.888335
+      ],
+      [
+        -102.416482,
+        43.458235
+      ],
+      [
+        -103.207231,
+        44.095412
+      ],
+      [
+        -103.034806,
+        44.206923
+      ]
+    ]
+  },
+  {
+    "route_id": "IR-140",
+    "route_type": "IR",
+    "route_name": "IR-140 Gulf Coast Over-Water / Littoral Route",
+    "originating_agency": "USAF / Eglin AFB (96th TW)",
+    "artcc_facility": "ZJX",
+    "floor_alt_ft": 100,
+    "ceiling_alt_ft": 15000,
+    "route_width_nm": 12.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-86.5211 30.4512, -85.7812 29.8512, -84.9512 29.2512)",
+    "segments": [
+      {
+        "segment_id": 39,
+        "route_id": "IR-140",
+        "sequence_num": 1,
+        "point_name": "IR140_BAY",
+        "point_type": "ENTRY",
+        "latitude_dec": 30.4512,
+        "longitude_dec": -86.5211,
+        "min_alt_ft": 100,
+        "max_alt_ft": 12000,
+        "width_left_nm": 6.0,
+        "width_right_nm": 6.0,
+        "next_point_name": "IR140_GULF",
+        "segment_distance_nm": 51.6,
+        "geometry_wkt": null,
+        "next_lat_dec": 29.8512,
+        "next_lon_dec": -85.7812,
+        "bearing_deg": 132.98,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "30270432N",
+        "arinc_lon": "086311596W",
+        "human_lat": "30\u00b0 27' 04.32\" N",
+        "human_lon": "086\u00b0 31' 15.96\" W"
+      },
+      {
+        "segment_id": 40,
+        "route_id": "IR-140",
+        "sequence_num": 2,
+        "point_name": "IR140_GULF",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 29.8512,
+        "longitude_dec": -85.7812,
+        "min_alt_ft": 100,
+        "max_alt_ft": 15000,
+        "width_left_nm": 6.0,
+        "width_right_nm": 6.0,
+        "next_point_name": "IR140_COAST",
+        "segment_distance_nm": 55.3,
+        "geometry_wkt": null,
+        "next_lat_dec": 29.2512,
+        "next_lon_dec": -84.9512,
+        "bearing_deg": 129.52,
+        "cumulative_distance_nm": 51.6,
+        "arinc_lat": "29510432N",
+        "arinc_lon": "085465232W",
+        "human_lat": "29\u00b0 51' 04.32\" N",
+        "human_lon": "085\u00b0 46' 52.32\" W"
+      },
+      {
+        "segment_id": 41,
+        "route_id": "IR-140",
+        "sequence_num": 3,
+        "point_name": "IR140_COAST",
+        "point_type": "EXIT",
+        "latitude_dec": 29.2512,
+        "longitude_dec": -84.9512,
+        "min_alt_ft": 100,
+        "max_alt_ft": 15000,
+        "width_left_nm": 6.0,
+        "width_right_nm": 6.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 106.9,
+        "arinc_lat": "29150432N",
+        "arinc_lon": "084570432W",
+        "human_lat": "29\u00b0 15' 04.32\" N",
+        "human_lon": "084\u00b0 57' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 106.9,
+    "corridor_polygon": [
+      [
+        -86.442011,
+        30.524286
+      ],
+      [
+        -85.707823,
+        29.928268
+      ],
+      [
+        -84.878259,
+        29.328268
+      ],
+      [
+        -85.024031,
+        29.174092
+      ],
+      [
+        -85.854463,
+        29.774092
+      ],
+      [
+        -86.60007,
+        30.378066
+      ],
+      [
+        -86.442011,
+        30.524286
+      ]
+    ]
+  },
+  {
+    "route_id": "IR-160",
+    "route_type": "IR",
+    "route_name": "IR-160 Mid-Atlantic Coastal Defense Route",
+    "originating_agency": "USAF / Seymour Johnson AFB (4th FW)",
+    "artcc_facility": "ZDC",
+    "floor_alt_ft": 500,
+    "ceiling_alt_ft": 14000,
+    "route_width_nm": 8.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-77.9512 35.3312, -77.1211 35.9512, -76.3512 36.5211)",
+    "segments": [
+      {
+        "segment_id": 42,
+        "route_id": "IR-160",
+        "sequence_num": 1,
+        "point_name": "IR160_SJ",
+        "point_type": "ENTRY",
+        "latitude_dec": 35.3312,
+        "longitude_dec": -77.9512,
+        "min_alt_ft": 500,
+        "max_alt_ft": 10000,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "IR160_SOUND",
+        "segment_distance_nm": 58.2,
+        "geometry_wkt": null,
+        "next_lat_dec": 35.9512,
+        "next_lon_dec": -77.1211,
+        "bearing_deg": 47.17,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "35195232N",
+        "arinc_lon": "077570432W",
+        "human_lat": "35\u00b0 19' 52.32\" N",
+        "human_lon": "077\u00b0 57' 04.32\" W"
+      },
+      {
+        "segment_id": 43,
+        "route_id": "IR-160",
+        "sequence_num": 2,
+        "point_name": "IR160_SOUND",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 35.9512,
+        "longitude_dec": -77.1211,
+        "min_alt_ft": 500,
+        "max_alt_ft": 14000,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "IR160_OCEAN",
+        "segment_distance_nm": 56.7,
+        "geometry_wkt": null,
+        "next_lat_dec": 36.5211,
+        "next_lon_dec": -76.3512,
+        "bearing_deg": 47.23,
+        "cumulative_distance_nm": 58.2,
+        "arinc_lat": "35570432N",
+        "arinc_lon": "077071596W",
+        "human_lat": "35\u00b0 57' 04.32\" N",
+        "human_lon": "077\u00b0 07' 15.96\" W"
+      },
+      {
+        "segment_id": 44,
+        "route_id": "IR-160",
+        "sequence_num": 3,
+        "point_name": "IR160_OCEAN",
+        "point_type": "EXIT",
+        "latitude_dec": 36.5211,
+        "longitude_dec": -76.3512,
+        "min_alt_ft": 500,
+        "max_alt_ft": 14000,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 114.9,
+        "arinc_lat": "36311596N",
+        "arinc_lon": "076210432W",
+        "human_lat": "36\u00b0 31' 15.96\" N",
+        "human_lon": "076\u00b0 21' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 114.9,
+    "corridor_polygon": [
+      [
+        -78.00675,
+        35.380046
+      ],
+      [
+        -77.17702,
+        36.000093
+      ],
+      [
+        -76.40753,
+        36.569993
+      ],
+      [
+        -76.294942,
+        36.472181
+      ],
+      [
+        -77.065249,
+        35.902281
+      ],
+      [
+        -77.895718,
+        35.282329
+      ],
+      [
+        -78.00675,
+        35.380046
+      ]
+    ]
+  },
+  {
+    "route_id": "IR-178",
+    "route_type": "IR",
+    "route_name": "IR-178 Texas Panhandle Low-Altitude Corridor",
+    "originating_agency": "USAF / Dyess AFB (7th BW)",
+    "artcc_facility": "ZFW",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 16000,
+    "route_width_nm": 10.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-99.8512 32.4512, -100.7812 33.1512, -101.5211 33.8512)",
+    "segments": [
+      {
+        "segment_id": 45,
+        "route_id": "IR-178",
+        "sequence_num": 1,
+        "point_name": "IR178_ABILENE",
+        "point_type": "ENTRY",
+        "latitude_dec": 32.4512,
+        "longitude_dec": -99.8512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 12000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "IR178_PLAINS",
+        "segment_distance_nm": 63.8,
+        "geometry_wkt": null,
+        "next_lat_dec": 33.1512,
+        "next_lon_dec": -100.7812,
+        "bearing_deg": 312.09,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "32270432N",
+        "arinc_lon": "099510432W",
+        "human_lat": "32\u00b0 27' 04.32\" N",
+        "human_lon": "099\u00b0 51' 04.32\" W"
+      },
+      {
+        "segment_id": 46,
+        "route_id": "IR-178",
+        "sequence_num": 2,
+        "point_name": "IR178_PLAINS",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 33.1512,
+        "longitude_dec": -100.7812,
+        "min_alt_ft": 500,
+        "max_alt_ft": 16000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "IR178_CAPROCK",
+        "segment_distance_nm": 60.1,
+        "geometry_wkt": null,
+        "next_lat_dec": 33.8512,
+        "next_lon_dec": -101.5211,
+        "bearing_deg": 318.81,
+        "cumulative_distance_nm": 63.8,
+        "arinc_lat": "33090432N",
+        "arinc_lon": "100465232W",
+        "human_lat": "33\u00b0 09' 04.32\" N",
+        "human_lon": "100\u00b0 46' 52.32\" W"
+      },
+      {
+        "segment_id": 47,
+        "route_id": "IR-178",
+        "sequence_num": 3,
+        "point_name": "IR178_CAPROCK",
+        "point_type": "EXIT",
+        "latitude_dec": 33.8512,
+        "longitude_dec": -101.5211,
+        "min_alt_ft": 500,
+        "max_alt_ft": 16000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 123.9,
+        "arinc_lat": "33510432N",
+        "arinc_lon": "101311596W",
+        "human_lat": "33\u00b0 51' 04.32\" N",
+        "human_lon": "101\u00b0 31' 15.96\" W"
+      }
+    ],
+    "total_distance_nm": 123.9,
+    "corridor_polygon": [
+      [
+        -99.917305,
+        32.389383
+      ],
+      [
+        -100.856005,
+        33.096335
+      ],
+      [
+        -101.596512,
+        33.796334
+      ],
+      [
+        -101.445591,
+        33.90602
+      ],
+      [
+        -100.706301,
+        33.20602
+      ],
+      [
+        -99.785005,
+        32.512982
+      ],
+      [
+        -99.917305,
+        32.389383
+      ]
+    ]
+  },
+  {
+    "route_id": "IR-200",
+    "route_type": "IR",
+    "route_name": "IR-200 Great Basin / Nellis Test Range Corridor",
+    "originating_agency": "USAF / 57th Wing Nellis AFB",
+    "artcc_facility": "ZLC / ZLA",
+    "floor_alt_ft": 100,
+    "ceiling_alt_ft": 18000,
+    "route_width_nm": 10.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-115.0342 36.2356, -114.8512 37.1245, -114.1205 38.3512, -113.5120 39.8123)",
+    "segments": [
+      {
+        "segment_id": 20,
+        "route_id": "IR-200",
+        "sequence_num": 1,
+        "point_name": "PT_A_ENTRY",
+        "point_type": "ENTRY",
+        "latitude_dec": 36.2356,
+        "longitude_dec": -115.0342,
+        "min_alt_ft": 100,
+        "max_alt_ft": 14000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "PT_B_TURN",
+        "segment_distance_nm": 54.2,
+        "geometry_wkt": null,
+        "next_lat_dec": 37.1245,
+        "next_lon_dec": -114.8512,
+        "bearing_deg": 9.32,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "36140816N",
+        "arinc_lon": "115020312W",
+        "human_lat": "36\u00b0 14' 08.16\" N",
+        "human_lon": "115\u00b0 02' 03.12\" W"
+      },
+      {
+        "segment_id": 21,
+        "route_id": "IR-200",
+        "sequence_num": 2,
+        "point_name": "PT_B_TURN",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 37.1245,
+        "longitude_dec": -114.8512,
+        "min_alt_ft": 500,
+        "max_alt_ft": 16000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "PT_C_TURN",
+        "segment_distance_nm": 81.6,
+        "geometry_wkt": null,
+        "next_lat_dec": 38.3512,
+        "next_lon_dec": -114.1205,
+        "bearing_deg": 25.0,
+        "cumulative_distance_nm": 54.2,
+        "arinc_lat": "37072820N",
+        "arinc_lon": "114510432W",
+        "human_lat": "37\u00b0 07' 28.20\" N",
+        "human_lon": "114\u00b0 51' 04.32\" W"
+      },
+      {
+        "segment_id": 22,
+        "route_id": "IR-200",
+        "sequence_num": 3,
+        "point_name": "PT_C_TURN",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 38.3512,
+        "longitude_dec": -114.1205,
+        "min_alt_ft": 1000,
+        "max_alt_ft": 18000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "PT_D_EXIT",
+        "segment_distance_nm": 92.4,
+        "geometry_wkt": null,
+        "next_lat_dec": 39.8123,
+        "next_lon_dec": -113.512,
+        "bearing_deg": 17.72,
+        "cumulative_distance_nm": 135.8,
+        "arinc_lat": "38210432N",
+        "arinc_lon": "114071380W",
+        "human_lat": "38\u00b0 21' 04.32\" N",
+        "human_lon": "114\u00b0 07' 13.80\" W"
+      },
+      {
+        "segment_id": 23,
+        "route_id": "IR-200",
+        "sequence_num": 4,
+        "point_name": "PT_D_EXIT",
+        "point_type": "EXIT",
+        "latitude_dec": 39.8123,
+        "longitude_dec": -113.512,
+        "min_alt_ft": 1000,
+        "max_alt_ft": 18000,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 228.2,
+        "arinc_lat": "39484428N",
+        "arinc_lon": "113304320W",
+        "human_lat": "39\u00b0 48' 44.28\" N",
+        "human_lon": "113\u00b0 30' 43.20\" W"
+      }
+    ],
+    "total_distance_nm": 228.2,
+    "corridor_polygon": [
+      [
+        -115.1361,
+        36.249043
+      ],
+      [
+        -114.945904,
+        37.159657
+      ],
+      [
+        -114.221688,
+        38.376503
+      ],
+      [
+        -113.615308,
+        39.837601
+      ],
+      [
+        -113.408769,
+        39.786908
+      ],
+      [
+        -114.019383,
+        38.32581
+      ],
+      [
+        -114.756584,
+        37.089268
+      ],
+      [
+        -114.932335,
+        36.22207
+      ],
+      [
+        -115.1361,
+        36.249043
+      ]
+    ]
+  },
+  {
+    "route_id": "IR-211",
+    "route_type": "IR",
+    "route_name": "IR-211 Mojave High Speed Low Altitude Route",
+    "originating_agency": "USAF / Edwards AFB (412th TW)",
+    "artcc_facility": "ZLA",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 15000,
+    "route_width_nm": 8.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-117.8821 34.9056, -117.2511 35.3412, -116.4512 35.8112)",
+    "segments": [
+      {
+        "segment_id": 24,
+        "route_id": "IR-211",
+        "sequence_num": 1,
+        "point_name": "IR211_ENTRY",
+        "point_type": "ENTRY",
+        "latitude_dec": 34.9056,
+        "longitude_dec": -117.8821,
+        "min_alt_ft": 200,
+        "max_alt_ft": 12000,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "IR211_PIVOT",
+        "segment_distance_nm": 41.3,
+        "geometry_wkt": null,
+        "next_lat_dec": 35.3412,
+        "next_lon_dec": -117.2511,
+        "bearing_deg": 49.65,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "34542016N",
+        "arinc_lon": "117525556W",
+        "human_lat": "34\u00b0 54' 20.16\" N",
+        "human_lon": "117\u00b0 52' 55.56\" W"
+      },
+      {
+        "segment_id": 25,
+        "route_id": "IR-211",
+        "sequence_num": 2,
+        "point_name": "IR211_PIVOT",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 35.3412,
+        "longitude_dec": -117.2511,
+        "min_alt_ft": 500,
+        "max_alt_ft": 15000,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "IR211_EXIT",
+        "segment_distance_nm": 48.7,
+        "geometry_wkt": null,
+        "next_lat_dec": 35.8112,
+        "next_lon_dec": -116.4512,
+        "bearing_deg": 53.92,
+        "cumulative_distance_nm": 41.3,
+        "arinc_lat": "35202832N",
+        "arinc_lon": "117150396W",
+        "human_lat": "35\u00b0 20' 28.32\" N",
+        "human_lon": "117\u00b0 15' 03.96\" W"
+      },
+      {
+        "segment_id": 26,
+        "route_id": "IR-211",
+        "sequence_num": 3,
+        "point_name": "IR211_EXIT",
+        "point_type": "EXIT",
+        "latitude_dec": 35.8112,
+        "longitude_dec": -116.4512,
+        "min_alt_ft": 500,
+        "max_alt_ft": 15000,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 90.0,
+        "arinc_lat": "35484032N",
+        "arinc_lon": "116270432W",
+        "human_lat": "35\u00b0 48' 40.32\" N",
+        "human_lon": "116\u00b0 27' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 90.0,
+    "corridor_polygon": [
+      [
+        -117.93473,
+        34.956361
+      ],
+      [
+        -117.29923,
+        35.395034
+      ],
+      [
+        -116.499614,
+        35.865034
+      ],
+      [
+        -116.402852,
+        35.757347
+      ],
+      [
+        -117.203034,
+        35.287347
+      ],
+      [
+        -117.829535,
+        34.854816
+      ],
+      [
+        -117.93473,
+        34.956361
+      ]
+    ]
+  },
+  {
+    "route_id": "IR-300",
+    "route_type": "IR",
+    "route_name": "IR-300 Sonoran Desert Tactical Route",
+    "originating_agency": "USAF / Luke AFB (56th FW)",
+    "artcc_facility": "ZAB",
+    "floor_alt_ft": 300,
+    "ceiling_alt_ft": 15000,
+    "route_width_nm": 8.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-112.3512 33.5211, -112.9512 32.9512, -113.6512 32.4512)",
+    "segments": [
+      {
+        "segment_id": 48,
+        "route_id": "IR-300",
+        "sequence_num": 1,
+        "point_name": "IR300_LUKE",
+        "point_type": "ENTRY",
+        "latitude_dec": 33.5211,
+        "longitude_dec": -112.3512,
+        "min_alt_ft": 300,
+        "max_alt_ft": 12000,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "IR300_GILA",
+        "segment_distance_nm": 47.9,
+        "geometry_wkt": null,
+        "next_lat_dec": 32.9512,
+        "next_lon_dec": -112.9512,
+        "bearing_deg": 221.53,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "33311596N",
+        "arinc_lon": "112210432W",
+        "human_lat": "33\u00b0 31' 15.96\" N",
+        "human_lon": "112\u00b0 21' 04.32\" W"
+      },
+      {
+        "segment_id": 49,
+        "route_id": "IR-300",
+        "sequence_num": 2,
+        "point_name": "IR300_GILA",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 32.9512,
+        "longitude_dec": -112.9512,
+        "min_alt_ft": 500,
+        "max_alt_ft": 15000,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "IR300_BORDER",
+        "segment_distance_nm": 50.4,
+        "geometry_wkt": null,
+        "next_lat_dec": 32.4512,
+        "next_lon_dec": -113.6512,
+        "bearing_deg": 229.86,
+        "cumulative_distance_nm": 47.9,
+        "arinc_lat": "32570432N",
+        "arinc_lon": "112570432W",
+        "human_lat": "32\u00b0 57' 04.32\" N",
+        "human_lon": "112\u00b0 57' 04.32\" W"
+      },
+      {
+        "segment_id": 50,
+        "route_id": "IR-300",
+        "sequence_num": 3,
+        "point_name": "IR300_BORDER",
+        "point_type": "EXIT",
+        "latitude_dec": 32.4512,
+        "longitude_dec": -113.6512,
+        "min_alt_ft": 500,
+        "max_alt_ft": 15000,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 98.3,
+        "arinc_lat": "32270432N",
+        "arinc_lon": "113390432W",
+        "human_lat": "32\u00b0 27' 04.32\" N",
+        "human_lon": "113\u00b0 39' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 98.3,
+    "corridor_polygon": [
+      [
+        -112.291407,
+        33.476915
+      ],
+      [
+        -112.900048,
+        32.900259
+      ],
+      [
+        -113.600333,
+        32.400259
+      ],
+      [
+        -113.702124,
+        32.50212
+      ],
+      [
+        -113.002411,
+        33.00212
+      ],
+      [
+        -112.411054,
+        33.565257
+      ],
+      [
+        -112.291407,
+        33.476915
+      ]
+    ]
+  },
+  {
+    "route_id": "SR-101",
+    "route_type": "SR",
+    "route_name": "SR-101 Fort Irwin Tactical Slow Speed Route",
+    "originating_agency": "USA / Fort Irwin National Training Center",
+    "artcc_facility": "ZLA",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 3000,
+    "route_width_nm": 5.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-116.6811 35.2512, -116.1212 35.6212)",
+    "segments": [
+      {
+        "segment_id": 81,
+        "route_id": "SR-101",
+        "sequence_num": 1,
+        "point_name": "SR101_ALPHA",
+        "point_type": "ENTRY",
+        "latitude_dec": 35.2512,
+        "longitude_dec": -116.6811,
+        "min_alt_ft": 200,
+        "max_alt_ft": 3000,
+        "width_left_nm": 2.5,
+        "width_right_nm": 2.5,
+        "next_point_name": "SR101_BRAVO",
+        "segment_distance_nm": 34.6,
+        "geometry_wkt": null,
+        "next_lat_dec": 35.6212,
+        "next_lon_dec": -116.1212,
+        "bearing_deg": 50.79,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "35150432N",
+        "arinc_lon": "116405196W",
+        "human_lat": "35\u00b0 15' 04.32\" N",
+        "human_lon": "116\u00b0 40' 51.96\" W"
+      },
+      {
+        "segment_id": 82,
+        "route_id": "SR-101",
+        "sequence_num": 2,
+        "point_name": "SR101_BRAVO",
+        "point_type": "EXIT",
+        "latitude_dec": 35.6212,
+        "longitude_dec": -116.1212,
+        "min_alt_ft": 200,
+        "max_alt_ft": 3000,
+        "width_left_nm": 2.5,
+        "width_right_nm": 2.5,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 34.6,
+        "arinc_lat": "35371632N",
+        "arinc_lon": "116071632W",
+        "human_lat": "35\u00b0 37' 16.32\" N",
+        "human_lon": "116\u00b0 07' 16.32\" W"
+      }
+    ],
+    "total_distance_nm": 34.6,
+    "corridor_polygon": [
+      [
+        -116.713346,
+        35.283459
+      ],
+      [
+        -116.153595,
+        35.653459
+      ],
+      [
+        -116.088832,
+        35.588933
+      ],
+      [
+        -116.64888,
+        35.218933
+      ],
+      [
+        -116.713346,
+        35.283459
+      ]
+    ]
+  },
+  {
+    "route_id": "SR-102",
+    "route_type": "SR",
+    "route_name": "SR-102 Fort Cavazos Army Air Assault Route",
+    "originating_agency": "USA / Fort Cavazos (III Armored Corps)",
+    "artcc_facility": "ZFW",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 3500,
+    "route_width_nm": 5.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-97.7512 31.1512, -98.3512 31.6512)",
+    "segments": [
+      {
+        "segment_id": 83,
+        "route_id": "SR-102",
+        "sequence_num": 1,
+        "point_name": "SR102_HOOD",
+        "point_type": "ENTRY",
+        "latitude_dec": 31.1512,
+        "longitude_dec": -97.7512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 3500,
+        "width_left_nm": 2.5,
+        "width_right_nm": 2.5,
+        "next_point_name": "SR102_TEXAS",
+        "segment_distance_nm": 46.1,
+        "geometry_wkt": null,
+        "next_lat_dec": 31.6512,
+        "next_lon_dec": -98.3512,
+        "bearing_deg": 314.47,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "31090432N",
+        "arinc_lon": "097450432W",
+        "human_lat": "31\u00b0 09' 04.32\" N",
+        "human_lon": "097\u00b0 45' 04.32\" W"
+      },
+      {
+        "segment_id": 84,
+        "route_id": "SR-102",
+        "sequence_num": 2,
+        "point_name": "SR102_TEXAS",
+        "point_type": "EXIT",
+        "latitude_dec": 31.6512,
+        "longitude_dec": -98.3512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 3500,
+        "width_left_nm": 2.5,
+        "width_right_nm": 2.5,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 46.1,
+        "arinc_lat": "31390432N",
+        "arinc_lon": "098210432W",
+        "human_lat": "31\u00b0 39' 04.32\" N",
+        "human_lon": "098\u00b0 21' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 46.1,
+    "corridor_polygon": [
+      [
+        -97.785273,
+        31.121481
+      ],
+      [
+        -98.385455,
+        31.621481
+      ],
+      [
+        -98.316923,
+        31.680909
+      ],
+      [
+        -97.717105,
+        31.18091
+      ],
+      [
+        -97.785273,
+        31.121481
+      ]
+    ]
+  },
+  {
+    "route_id": "SR-103",
+    "route_type": "SR",
+    "route_name": "SR-103 Fort Liberty Airborne Infantry Route",
+    "originating_agency": "USA / Fort Liberty (82nd Airborne)",
+    "artcc_facility": "ZDC",
+    "floor_alt_ft": 300,
+    "ceiling_alt_ft": 4000,
+    "route_width_nm": 6.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-79.1512 35.1211, -79.8512 35.6512)",
+    "segments": [
+      {
+        "segment_id": 85,
+        "route_id": "SR-103",
+        "sequence_num": 1,
+        "point_name": "SR103_BRAGG",
+        "point_type": "ENTRY",
+        "latitude_dec": 35.1211,
+        "longitude_dec": -79.1512,
+        "min_alt_ft": 300,
+        "max_alt_ft": 4000,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "SR103_CAROLINA",
+        "segment_distance_nm": 51.4,
+        "geometry_wkt": null,
+        "next_lat_dec": 35.6512,
+        "next_lon_dec": -79.8512,
+        "bearing_deg": 313.09,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "35071596N",
+        "arinc_lon": "079090432W",
+        "human_lat": "35\u00b0 07' 15.96\" N",
+        "human_lon": "079\u00b0 09' 04.32\" W"
+      },
+      {
+        "segment_id": 86,
+        "route_id": "SR-103",
+        "sequence_num": 2,
+        "point_name": "SR103_CAROLINA",
+        "point_type": "EXIT",
+        "latitude_dec": 35.6512,
+        "longitude_dec": -79.8512,
+        "min_alt_ft": 300,
+        "max_alt_ft": 4000,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 51.4,
+        "arinc_lat": "35390432N",
+        "arinc_lon": "079510432W",
+        "human_lat": "35\u00b0 39' 04.32\" N",
+        "human_lon": "079\u00b0 51' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 51.4,
+    "corridor_polygon": [
+      [
+        -79.192913,
+        35.084603
+      ],
+      [
+        -79.893188,
+        35.614703
+      ],
+      [
+        -79.809174,
+        35.687682
+      ],
+      [
+        -79.109449,
+        35.157582
+      ],
+      [
+        -79.192913,
+        35.084603
+      ]
+    ]
+  },
+  {
+    "route_id": "SR-104",
+    "route_type": "SR",
+    "route_name": "SR-104 Fort Riley Tactical Cavalry Route",
+    "originating_agency": "USA / Fort Riley (1st Infantry Div)",
+    "artcc_facility": "ZKC",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 3000,
+    "route_width_nm": 5.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-96.7812 39.1211, -97.3512 39.6512)",
+    "segments": [
+      {
+        "segment_id": 87,
+        "route_id": "SR-104",
+        "sequence_num": 1,
+        "point_name": "SR104_RILEY",
+        "point_type": "ENTRY",
+        "latitude_dec": 39.1211,
+        "longitude_dec": -96.7812,
+        "min_alt_ft": 200,
+        "max_alt_ft": 3000,
+        "width_left_nm": 2.5,
+        "width_right_nm": 2.5,
+        "next_point_name": "SR104_KANSAS",
+        "segment_distance_nm": 44.9,
+        "geometry_wkt": null,
+        "next_lat_dec": 39.6512,
+        "next_lon_dec": -97.3512,
+        "bearing_deg": 320.45,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "39071596N",
+        "arinc_lon": "096465232W",
+        "human_lat": "39\u00b0 07' 15.96\" N",
+        "human_lon": "096\u00b0 46' 52.32\" W"
+      },
+      {
+        "segment_id": 88,
+        "route_id": "SR-104",
+        "sequence_num": 2,
+        "point_name": "SR104_KANSAS",
+        "point_type": "EXIT",
+        "latitude_dec": 39.6512,
+        "longitude_dec": -97.3512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 3000,
+        "width_left_nm": 2.5,
+        "width_right_nm": 2.5,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 44.9,
+        "arinc_lat": "39390432N",
+        "arinc_lon": "097210432W",
+        "human_lat": "39\u00b0 39' 04.32\" N",
+        "human_lon": "097\u00b0 21' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 44.9,
+    "corridor_polygon": [
+      [
+        -96.822568,
+        39.094579
+      ],
+      [
+        -97.392883,
+        39.624679
+      ],
+      [
+        -97.309485,
+        39.677706
+      ],
+      [
+        -96.7398,
+        39.147606
+      ],
+      [
+        -96.822568,
+        39.094579
+      ]
+    ]
+  },
+  {
+    "route_id": "SR-105",
+    "route_type": "SR",
+    "route_name": "SR-105 Joint Readiness Training Center Route",
+    "originating_agency": "USA / Fort Johnson JRTC",
+    "artcc_facility": "ZHU",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 3500,
+    "route_width_nm": 5.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-93.1812 31.0512, -93.7512 31.5512)",
+    "segments": [
+      {
+        "segment_id": 89,
+        "route_id": "SR-105",
+        "sequence_num": 1,
+        "point_name": "SR105_POLK",
+        "point_type": "ENTRY",
+        "latitude_dec": 31.0512,
+        "longitude_dec": -93.1812,
+        "min_alt_ft": 200,
+        "max_alt_ft": 3500,
+        "width_left_nm": 2.5,
+        "width_right_nm": 2.5,
+        "next_point_name": "SR105_BAYOU",
+        "segment_distance_nm": 45.3,
+        "geometry_wkt": null,
+        "next_lat_dec": 31.5512,
+        "next_lon_dec": -93.7512,
+        "bearing_deg": 315.9,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "31030432N",
+        "arinc_lon": "093105232W",
+        "human_lat": "31\u00b0 03' 04.32\" N",
+        "human_lon": "093\u00b0 10' 52.32\" W"
+      },
+      {
+        "segment_id": 90,
+        "route_id": "SR-105",
+        "sequence_num": 2,
+        "point_name": "SR105_BAYOU",
+        "point_type": "EXIT",
+        "latitude_dec": 31.5512,
+        "longitude_dec": -93.7512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 3500,
+        "width_left_nm": 2.5,
+        "width_right_nm": 2.5,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 45.3,
+        "arinc_lat": "31330432N",
+        "arinc_lon": "093450432W",
+        "human_lat": "31\u00b0 33' 04.32\" N",
+        "human_lon": "093\u00b0 45' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 45.3,
+    "corridor_polygon": [
+      [
+        -93.216093,
+        31.022218
+      ],
+      [
+        -93.786278,
+        31.522218
+      ],
+      [
+        -93.7161,
+        31.580172
+      ],
+      [
+        -93.146286,
+        31.080172
+      ],
+      [
+        -93.216093,
+        31.022218
+      ]
+    ]
+  },
+  {
+    "route_id": "VR-1001",
+    "route_type": "VR",
+    "route_name": "VR-1001 Southeast Coastal Low-Level VFR",
+    "originating_agency": "USN / NAS Jacksonville",
+    "artcc_facility": "ZJX",
+    "floor_alt_ft": 100,
+    "ceiling_alt_ft": 1500,
+    "route_width_nm": 8.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-81.6811 30.2211, -81.2512 29.6512, -80.8512 28.9512)",
+    "segments": [
+      {
+        "segment_id": 57,
+        "route_id": "VR-1001",
+        "sequence_num": 1,
+        "point_name": "VR1001_JAX",
+        "point_type": "ENTRY",
+        "latitude_dec": 30.2211,
+        "longitude_dec": -81.6811,
+        "min_alt_ft": 100,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "VR1001_FLAGLER",
+        "segment_distance_nm": 44.8,
+        "geometry_wkt": null,
+        "next_lat_dec": 29.6512,
+        "next_lon_dec": -81.2512,
+        "bearing_deg": 146.72,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "30131596N",
+        "arinc_lon": "081405196W",
+        "human_lat": "30\u00b0 13' 15.96\" N",
+        "human_lon": "081\u00b0 40' 51.96\" W"
+      },
+      {
+        "segment_id": 58,
+        "route_id": "VR-1001",
+        "sequence_num": 2,
+        "point_name": "VR1001_FLAGLER",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 29.6512,
+        "longitude_dec": -81.2512,
+        "min_alt_ft": 100,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "VR1001_CANAVERAL",
+        "segment_distance_nm": 47.3,
+        "geometry_wkt": null,
+        "next_lat_dec": 28.9512,
+        "next_lon_dec": -80.8512,
+        "bearing_deg": 153.41,
+        "cumulative_distance_nm": 44.8,
+        "arinc_lat": "29390432N",
+        "arinc_lon": "081150432W",
+        "human_lat": "29\u00b0 39' 04.32\" N",
+        "human_lon": "081\u00b0 15' 04.32\" W"
+      },
+      {
+        "segment_id": 59,
+        "route_id": "VR-1001",
+        "sequence_num": 3,
+        "point_name": "VR1001_CANAVERAL",
+        "point_type": "EXIT",
+        "latitude_dec": 28.9512,
+        "longitude_dec": -80.8512,
+        "min_alt_ft": 100,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 92.1,
+        "arinc_lat": "28570432N",
+        "arinc_lon": "080510432W",
+        "human_lat": "28\u00b0 57' 04.32\" N",
+        "human_lon": "080\u00b0 51' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 92.1,
+    "corridor_polygon": [
+      [
+        -81.61662,
+        30.257642
+      ],
+      [
+        -81.182628,
+        29.681002
+      ],
+      [
+        -80.783097,
+        28.981003
+      ],
+      [
+        -80.919264,
+        28.921363
+      ],
+      [
+        -81.319732,
+        29.621362
+      ],
+      [
+        -81.745532,
+        30.184527
+      ],
+      [
+        -81.61662,
+        30.257642
+      ]
+    ]
+  },
+  {
+    "route_id": "VR-1002",
+    "route_type": "VR",
+    "route_name": "VR-1002 Appalachian Mountain VFR Low Corridor",
+    "originating_agency": "USAF / Shaw AFB (20th FW)",
+    "artcc_facility": "ZTL",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 1500,
+    "route_width_nm": 6.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-80.4512 34.0211, -81.2512 34.7512, -82.1211 35.3512)",
+    "segments": [
+      {
+        "segment_id": 60,
+        "route_id": "VR-1002",
+        "sequence_num": 1,
+        "point_name": "VR1002_SHAW",
+        "point_type": "ENTRY",
+        "latitude_dec": 34.0211,
+        "longitude_dec": -80.4512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "VR1002_PIEDMONT",
+        "segment_distance_nm": 58.1,
+        "geometry_wkt": null,
+        "next_lat_dec": 34.7512,
+        "next_lon_dec": -81.2512,
+        "bearing_deg": 318.1,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "34011596N",
+        "arinc_lon": "080270432W",
+        "human_lat": "34\u00b0 01' 15.96\" N",
+        "human_lon": "080\u00b0 27' 04.32\" W"
+      },
+      {
+        "segment_id": 61,
+        "route_id": "VR-1002",
+        "sequence_num": 2,
+        "point_name": "VR1002_PIEDMONT",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 34.7512,
+        "longitude_dec": -81.2512,
+        "min_alt_ft": 300,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "VR1002_RIDGE",
+        "segment_distance_nm": 60.5,
+        "geometry_wkt": null,
+        "next_lat_dec": 35.3512,
+        "next_lon_dec": -82.1211,
+        "bearing_deg": 310.36,
+        "cumulative_distance_nm": 58.1,
+        "arinc_lat": "34450432N",
+        "arinc_lon": "081150432W",
+        "human_lat": "34\u00b0 45' 04.32\" N",
+        "human_lon": "081\u00b0 15' 04.32\" W"
+      },
+      {
+        "segment_id": 62,
+        "route_id": "VR-1002",
+        "sequence_num": 3,
+        "point_name": "VR1002_RIDGE",
+        "point_type": "EXIT",
+        "latitude_dec": 35.3512,
+        "longitude_dec": -82.1211,
+        "min_alt_ft": 300,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 118.6,
+        "arinc_lat": "35210432N",
+        "arinc_lon": "082071596W",
+        "human_lat": "35\u00b0 21' 04.32\" N",
+        "human_lon": "082\u00b0 07' 15.96\" W"
+      }
+    ],
+    "total_distance_nm": 118.6,
+    "corridor_polygon": [
+      [
+        -80.496053,
+        33.987723
+      ],
+      [
+        -81.290564,
+        34.71312
+      ],
+      [
+        -82.160754,
+        35.31312
+      ],
+      [
+        -82.081409,
+        35.389267
+      ],
+      [
+        -81.2118,
+        34.789268
+      ],
+      [
+        -80.406311,
+        34.054461
+      ],
+      [
+        -80.496053,
+        33.987723
+      ]
+    ]
+  },
+  {
+    "route_id": "VR-1020",
+    "route_type": "VR",
+    "route_name": "VR-1020 Olympic Coastal VFR Route",
+    "originating_agency": "USN / NAS Whidbey Island",
+    "artcc_facility": "ZSE",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 1500,
+    "route_width_nm": 8.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-122.6512 48.3512, -123.8512 48.0512, -124.6512 47.4512)",
+    "segments": [
+      {
+        "segment_id": 63,
+        "route_id": "VR-1020",
+        "sequence_num": 1,
+        "point_name": "VR1020_SOUND",
+        "point_type": "ENTRY",
+        "latitude_dec": 48.3512,
+        "longitude_dec": -122.6512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "VR1020_STRAIT",
+        "segment_distance_nm": 52.6,
+        "geometry_wkt": null,
+        "next_lat_dec": 48.0512,
+        "next_lon_dec": -123.8512,
+        "bearing_deg": 249.89,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "48210432N",
+        "arinc_lon": "122390432W",
+        "human_lat": "48\u00b0 21' 04.32\" N",
+        "human_lon": "122\u00b0 39' 04.32\" W"
+      },
+      {
+        "segment_id": 64,
+        "route_id": "VR-1020",
+        "sequence_num": 2,
+        "point_name": "VR1020_STRAIT",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 48.0512,
+        "longitude_dec": -123.8512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "VR1020_PACIFIC",
+        "segment_distance_nm": 49.8,
+        "geometry_wkt": null,
+        "next_lat_dec": 47.4512,
+        "next_lon_dec": -124.6512,
+        "bearing_deg": 222.17,
+        "cumulative_distance_nm": 52.6,
+        "arinc_lat": "48030432N",
+        "arinc_lon": "123510432W",
+        "human_lat": "48\u00b0 03' 04.32\" N",
+        "human_lon": "123\u00b0 51' 04.32\" W"
+      },
+      {
+        "segment_id": 65,
+        "route_id": "VR-1020",
+        "sequence_num": 3,
+        "point_name": "VR1020_PACIFIC",
+        "point_type": "EXIT",
+        "latitude_dec": 47.4512,
+        "longitude_dec": -124.6512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 102.4,
+        "arinc_lat": "47270432N",
+        "arinc_lon": "124390432W",
+        "human_lat": "47\u00b0 27' 04.32\" N",
+        "human_lon": "124\u00b0 39' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 102.4,
+    "corridor_polygon": [
+      [
+        -122.616774,
+        48.288635
+      ],
+      [
+        -123.777398,
+        48.006451
+      ],
+      [
+        -124.578243,
+        47.406451
+      ],
+      [
+        -124.724282,
+        47.495902
+      ],
+      [
+        -123.92513,
+        48.095902
+      ],
+      [
+        -122.68571,
+        48.413755
+      ],
+      [
+        -122.616774,
+        48.288635
+      ]
+    ]
+  },
+  {
+    "route_id": "VR-1254",
+    "route_type": "VR",
+    "route_name": "VR-1254 Central Valley / Sierra Low-Level VFR Corridor",
+    "originating_agency": "USN / NAS Lemoore",
+    "artcc_facility": "ZOA",
+    "floor_alt_ft": 100,
+    "ceiling_alt_ft": 1500,
+    "route_width_nm": 6.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-119.9512 36.3311, -119.3412 36.8512, -118.8112 37.3112)",
+    "segments": [
+      {
+        "segment_id": 51,
+        "route_id": "VR-1254",
+        "sequence_num": 1,
+        "point_name": "VR1254_START",
+        "point_type": "ENTRY",
+        "latitude_dec": 36.3311,
+        "longitude_dec": -119.9512,
+        "min_alt_ft": 100,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "VR1254_RIVER",
+        "segment_distance_nm": 42.1,
+        "geometry_wkt": null,
+        "next_lat_dec": 36.8512,
+        "next_lon_dec": -119.3412,
+        "bearing_deg": 43.1,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "36195196N",
+        "arinc_lon": "119570432W",
+        "human_lat": "36\u00b0 19' 51.96\" N",
+        "human_lon": "119\u00b0 57' 04.32\" W"
+      },
+      {
+        "segment_id": 52,
+        "route_id": "VR-1254",
+        "sequence_num": 2,
+        "point_name": "VR1254_RIVER",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 36.8512,
+        "longitude_dec": -119.3412,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "VR1254_EXIT",
+        "segment_distance_nm": 37.8,
+        "geometry_wkt": null,
+        "next_lat_dec": 37.3112,
+        "next_lon_dec": -118.8112,
+        "bearing_deg": 42.43,
+        "cumulative_distance_nm": 42.1,
+        "arinc_lat": "36510432N",
+        "arinc_lon": "119202832W",
+        "human_lat": "36\u00b0 51' 04.32\" N",
+        "human_lon": "119\u00b0 20' 28.32\" W"
+      },
+      {
+        "segment_id": 53,
+        "route_id": "VR-1254",
+        "sequence_num": 3,
+        "point_name": "VR1254_EXIT",
+        "point_type": "EXIT",
+        "latitude_dec": 37.3112,
+        "longitude_dec": -118.8112,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 79.9,
+        "arinc_lat": "37184032N",
+        "arinc_lon": "118484032W",
+        "human_lat": "37\u00b0 18' 40.32\" N",
+        "human_lon": "118\u00b0 48' 40.32\" W"
+      }
+    ],
+    "total_distance_nm": 79.9,
+    "corridor_polygon": [
+      [
+        -119.996507,
+        36.365232
+      ],
+      [
+        -119.387309,
+        36.884903
+      ],
+      [
+        -118.85759,
+        37.344903
+      ],
+      [
+        -118.764851,
+        37.277479
+      ],
+      [
+        -119.295131,
+        36.817479
+      ],
+      [
+        -119.905933,
+        36.296951
+      ],
+      [
+        -119.996507,
+        36.365232
+      ]
+    ]
+  },
+  {
+    "route_id": "VR-1265",
+    "route_type": "VR",
+    "route_name": "VR-1265 Death Valley Tactical VFR Route",
+    "originating_agency": "USAF / Edwards AFB (412th TW)",
+    "artcc_facility": "ZLA",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 1500,
+    "route_width_nm": 6.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-117.4512 35.7512, -116.9512 36.2511, -116.3512 36.8512)",
+    "segments": [
+      {
+        "segment_id": 54,
+        "route_id": "VR-1265",
+        "sequence_num": 1,
+        "point_name": "VR1265_PANAMINT",
+        "point_type": "ENTRY",
+        "latitude_dec": 35.7512,
+        "longitude_dec": -117.4512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "VR1265_VALLEY",
+        "segment_distance_nm": 44.2,
+        "geometry_wkt": null,
+        "next_lat_dec": 36.2511,
+        "next_lon_dec": -116.9512,
+        "bearing_deg": 38.83,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "35450432N",
+        "arinc_lon": "117270432W",
+        "human_lat": "35\u00b0 45' 04.32\" N",
+        "human_lon": "117\u00b0 27' 04.32\" W"
+      },
+      {
+        "segment_id": 55,
+        "route_id": "VR-1265",
+        "sequence_num": 2,
+        "point_name": "VR1265_VALLEY",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 36.2511,
+        "longitude_dec": -116.9512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "VR1265_DUNE",
+        "segment_distance_nm": 47.1,
+        "geometry_wkt": null,
+        "next_lat_dec": 36.8512,
+        "next_lon_dec": -116.3512,
+        "bearing_deg": 38.59,
+        "cumulative_distance_nm": 44.2,
+        "arinc_lat": "36150396N",
+        "arinc_lon": "116570432W",
+        "human_lat": "36\u00b0 15' 03.96\" N",
+        "human_lon": "116\u00b0 57' 04.32\" W"
+      },
+      {
+        "segment_id": 56,
+        "route_id": "VR-1265",
+        "sequence_num": 3,
+        "point_name": "VR1265_DUNE",
+        "point_type": "EXIT",
+        "latitude_dec": 36.8512,
+        "longitude_dec": -116.3512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 91.3,
+        "arinc_lat": "36510432N",
+        "arinc_lon": "116210432W",
+        "human_lat": "36\u00b0 51' 04.32\" N",
+        "human_lon": "116\u00b0 21' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 91.3,
+    "corridor_polygon": [
+      [
+        -117.499181,
+        35.78252
+      ],
+      [
+        -116.999649,
+        36.282256
+      ],
+      [
+        -116.400027,
+        36.882356
+      ],
+      [
+        -116.302413,
+        36.820024
+      ],
+      [
+        -116.90279,
+        36.219924
+      ],
+      [
+        -117.403257,
+        35.719861
+      ],
+      [
+        -117.499181,
+        35.78252
+      ]
+    ]
+  },
+  {
+    "route_id": "VR-1355",
+    "route_type": "VR",
+    "route_name": "VR-1355 Rocky Mountain Intermountain VFR",
+    "originating_agency": "USAF / Hill AFB (388th FW)",
+    "artcc_facility": "ZLC",
+    "floor_alt_ft": 300,
+    "ceiling_alt_ft": 1500,
+    "route_width_nm": 6.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-111.9512 41.1211, -111.2512 41.7512, -110.5512 42.2512)",
+    "segments": [
+      {
+        "segment_id": 66,
+        "route_id": "VR-1355",
+        "sequence_num": 1,
+        "point_name": "VR1355_HILL",
+        "point_type": "ENTRY",
+        "latitude_dec": 41.1211,
+        "longitude_dec": -111.9512,
+        "min_alt_ft": 300,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "VR1355_BASIN",
+        "segment_distance_nm": 48.5,
+        "geometry_wkt": null,
+        "next_lat_dec": 41.7512,
+        "next_lon_dec": -111.2512,
+        "bearing_deg": 39.56,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "41071596N",
+        "arinc_lon": "111570432W",
+        "human_lat": "41\u00b0 07' 15.96\" N",
+        "human_lon": "111\u00b0 57' 04.32\" W"
+      },
+      {
+        "segment_id": 67,
+        "route_id": "VR-1355",
+        "sequence_num": 2,
+        "point_name": "VR1355_BASIN",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 41.7512,
+        "longitude_dec": -111.2512,
+        "min_alt_ft": 300,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "VR1355_PASS",
+        "segment_distance_nm": 47.1,
+        "geometry_wkt": null,
+        "next_lat_dec": 42.2512,
+        "next_lon_dec": -110.5512,
+        "bearing_deg": 45.9,
+        "cumulative_distance_nm": 48.5,
+        "arinc_lat": "41450432N",
+        "arinc_lon": "111150432W",
+        "human_lat": "41\u00b0 45' 04.32\" N",
+        "human_lon": "111\u00b0 15' 04.32\" W"
+      },
+      {
+        "segment_id": 68,
+        "route_id": "VR-1355",
+        "sequence_num": 3,
+        "point_name": "VR1355_PASS",
+        "point_type": "EXIT",
+        "latitude_dec": 42.2512,
+        "longitude_dec": -110.5512,
+        "min_alt_ft": 300,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 95.6,
+        "arinc_lat": "42150432N",
+        "arinc_lon": "110330432W",
+        "human_lat": "42\u00b0 15' 04.32\" N",
+        "human_lon": "110\u00b0 33' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 95.6,
+    "corridor_polygon": [
+      [
+        -112.002361,
+        41.152912
+      ],
+      [
+        -111.297835,
+        41.787073
+      ],
+      [
+        -110.598203,
+        42.287073
+      ],
+      [
+        -110.50425,
+        42.215308
+      ],
+      [
+        -111.204617,
+        41.715308
+      ],
+      [
+        -111.900089,
+        41.089266
+      ],
+      [
+        -112.002361,
+        41.152912
+      ]
+    ]
+  },
+  {
+    "route_id": "VR-1360",
+    "route_type": "VR",
+    "route_name": "VR-1360 Great Plains Low-Level VFR",
+    "originating_agency": "USAF / McConnell AFB (22nd ARW)",
+    "artcc_facility": "ZKC",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 1500,
+    "route_width_nm": 8.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-97.2512 37.6211, -97.8512 38.2512, -98.4512 38.8512)",
+    "segments": [
+      {
+        "segment_id": 69,
+        "route_id": "VR-1360",
+        "sequence_num": 1,
+        "point_name": "VR1360_WICHITA",
+        "point_type": "ENTRY",
+        "latitude_dec": 37.6211,
+        "longitude_dec": -97.2512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "VR1360_PRAIRIE",
+        "segment_distance_nm": 47.8,
+        "geometry_wkt": null,
+        "next_lat_dec": 38.2512,
+        "next_lon_dec": -97.8512,
+        "bearing_deg": 323.28,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "37371596N",
+        "arinc_lon": "097150432W",
+        "human_lat": "37\u00b0 37' 15.96\" N",
+        "human_lon": "097\u00b0 15' 04.32\" W"
+      },
+      {
+        "segment_id": 70,
+        "route_id": "VR-1360",
+        "sequence_num": 2,
+        "point_name": "VR1360_PRAIRIE",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 38.2512,
+        "longitude_dec": -97.8512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "VR1360_KANSAS",
+        "segment_distance_nm": 46.2,
+        "geometry_wkt": null,
+        "next_lat_dec": 38.8512,
+        "next_lon_dec": -98.4512,
+        "bearing_deg": 322.16,
+        "cumulative_distance_nm": 47.8,
+        "arinc_lat": "38150432N",
+        "arinc_lon": "097510432W",
+        "human_lat": "38\u00b0 15' 04.32\" N",
+        "human_lon": "097\u00b0 51' 04.32\" W"
+      },
+      {
+        "segment_id": 71,
+        "route_id": "VR-1360",
+        "sequence_num": 3,
+        "point_name": "VR1360_KANSAS",
+        "point_type": "EXIT",
+        "latitude_dec": 38.8512,
+        "longitude_dec": -98.4512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 94.0,
+        "arinc_lat": "38510432N",
+        "arinc_lon": "098270432W",
+        "human_lat": "38\u00b0 51' 04.32\" N",
+        "human_lon": "098\u00b0 27' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 94.0,
+    "corridor_polygon": [
+      [
+        -97.318585,
+        37.581247
+      ],
+      [
+        -97.918159,
+        38.210311
+      ],
+      [
+        -98.51872,
+        38.810311
+      ],
+      [
+        -98.383603,
+        38.89205
+      ],
+      [
+        -97.784165,
+        38.292051
+      ],
+      [
+        -97.183743,
+        37.660914
+      ],
+      [
+        -97.318585,
+        37.581247
+      ]
+    ]
+  },
+  {
+    "route_id": "VR-1410",
+    "route_type": "VR",
+    "route_name": "VR-1410 Ozark Plateau Stealth VFR Corridor",
+    "originating_agency": "USAF / Whiteman AFB (509th BW)",
+    "artcc_facility": "ZKC",
+    "floor_alt_ft": 300,
+    "ceiling_alt_ft": 1500,
+    "route_width_nm": 6.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-93.5512 38.7211, -92.8512 38.1512, -92.1512 37.5512)",
+    "segments": [
+      {
+        "segment_id": 72,
+        "route_id": "VR-1410",
+        "sequence_num": 1,
+        "point_name": "VR1410_KNOB",
+        "point_type": "ENTRY",
+        "latitude_dec": 38.7211,
+        "longitude_dec": -93.5512,
+        "min_alt_ft": 300,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "VR1410_OZARK",
+        "segment_distance_nm": 50.3,
+        "geometry_wkt": null,
+        "next_lat_dec": 38.1512,
+        "next_lon_dec": -92.8512,
+        "bearing_deg": 135.89,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "38431596N",
+        "arinc_lon": "093330432W",
+        "human_lat": "38\u00b0 43' 15.96\" N",
+        "human_lon": "093\u00b0 33' 04.32\" W"
+      },
+      {
+        "segment_id": 73,
+        "route_id": "VR-1410",
+        "sequence_num": 2,
+        "point_name": "VR1410_OZARK",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 38.1512,
+        "longitude_dec": -92.8512,
+        "min_alt_ft": 300,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": "VR1410_MISSOURI",
+        "segment_distance_nm": 49.1,
+        "geometry_wkt": null,
+        "next_lat_dec": 37.5512,
+        "next_lon_dec": -92.1512,
+        "bearing_deg": 137.13,
+        "cumulative_distance_nm": 50.3,
+        "arinc_lat": "38090432N",
+        "arinc_lon": "092510432W",
+        "human_lat": "38\u00b0 09' 04.32\" N",
+        "human_lon": "092\u00b0 51' 04.32\" W"
+      },
+      {
+        "segment_id": 74,
+        "route_id": "VR-1410",
+        "sequence_num": 3,
+        "point_name": "VR1410_MISSOURI",
+        "point_type": "EXIT",
+        "latitude_dec": 37.5512,
+        "longitude_dec": -92.1512,
+        "min_alt_ft": 300,
+        "max_alt_ft": 1500,
+        "width_left_nm": 3.0,
+        "width_right_nm": 3.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 99.4,
+        "arinc_lat": "37330432N",
+        "arinc_lon": "092090432W",
+        "human_lat": "37\u00b0 33' 04.32\" N",
+        "human_lon": "092\u00b0 09' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 99.4,
+    "corridor_polygon": [
+      [
+        -93.505194,
+        38.755869
+      ],
+      [
+        -92.80461,
+        38.185185
+      ],
+      [
+        -92.104988,
+        37.585185
+      ],
+      [
+        -92.197369,
+        37.517197
+      ],
+      [
+        -92.897746,
+        38.117197
+      ],
+      [
+        -93.597161,
+        38.686313
+      ],
+      [
+        -93.505194,
+        38.755869
+      ]
+    ]
+  },
+  {
+    "route_id": "VR-1450",
+    "route_type": "VR",
+    "route_name": "VR-1450 Florida Panhandle Coast VFR",
+    "originating_agency": "USAF / Tyndall AFB (325th FW)",
+    "artcc_facility": "ZJX",
+    "floor_alt_ft": 100,
+    "ceiling_alt_ft": 1500,
+    "route_width_nm": 8.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-85.5812 30.0812, -84.9512 29.8512, -84.2512 29.6211)",
+    "segments": [
+      {
+        "segment_id": 75,
+        "route_id": "VR-1450",
+        "sequence_num": 1,
+        "point_name": "VR1450_TYNDALL",
+        "point_type": "ENTRY",
+        "latitude_dec": 30.0812,
+        "longitude_dec": -85.5812,
+        "min_alt_ft": 100,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "VR1450_BAY",
+        "segment_distance_nm": 35.8,
+        "geometry_wkt": null,
+        "next_lat_dec": 29.8512,
+        "next_lon_dec": -84.9512,
+        "bearing_deg": 112.69,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "30045232N",
+        "arinc_lon": "085345232W",
+        "human_lat": "30\u00b0 04' 52.32\" N",
+        "human_lon": "085\u00b0 34' 52.32\" W"
+      },
+      {
+        "segment_id": 76,
+        "route_id": "VR-1450",
+        "sequence_num": 2,
+        "point_name": "VR1450_BAY",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 29.8512,
+        "longitude_dec": -84.9512,
+        "min_alt_ft": 100,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": "VR1450_APALACHE",
+        "segment_distance_nm": 42.4,
+        "geometry_wkt": null,
+        "next_lat_dec": 29.6211,
+        "next_lon_dec": -84.2512,
+        "bearing_deg": 110.56,
+        "cumulative_distance_nm": 35.8,
+        "arinc_lat": "29510432N",
+        "arinc_lon": "084570432W",
+        "human_lat": "29\u00b0 51' 04.32\" N",
+        "human_lon": "084\u00b0 57' 04.32\" W"
+      },
+      {
+        "segment_id": 77,
+        "route_id": "VR-1450",
+        "sequence_num": 3,
+        "point_name": "VR1450_APALACHE",
+        "point_type": "EXIT",
+        "latitude_dec": 29.6211,
+        "longitude_dec": -84.2512,
+        "min_alt_ft": 100,
+        "max_alt_ft": 1500,
+        "width_left_nm": 4.0,
+        "width_right_nm": 4.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 78.2,
+        "arinc_lat": "29371596N",
+        "arinc_lon": "084150432W",
+        "human_lat": "29\u00b0 37' 15.96\" N",
+        "human_lon": "084\u00b0 15' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 78.2,
+    "corridor_polygon": [
+      [
+        -85.551483,
+        30.142662
+      ],
+      [
+        -84.924207,
+        29.913576
+      ],
+      [
+        -84.224269,
+        29.683476
+      ],
+      [
+        -84.278097,
+        29.558719
+      ],
+      [
+        -84.978159,
+        29.788819
+      ],
+      [
+        -85.610881,
+        30.019731
+      ],
+      [
+        -85.551483,
+        30.142662
+      ]
+    ]
+  },
+  {
+    "route_id": "VR-1500",
+    "route_type": "VR",
+    "route_name": "VR-1500 Interior Alaska Tactical Range Route",
+    "originating_agency": "USAF / Eielson AFB (354th FW)",
+    "artcc_facility": "ZAN",
+    "floor_alt_ft": 200,
+    "ceiling_alt_ft": 1500,
+    "route_width_nm": 10.0,
+    "status": "ACTIVE",
+    "geometry_wkt": "LINESTRING(-147.1211 64.6512, -146.2512 64.1512, -145.3512 63.6512)",
+    "segments": [
+      {
+        "segment_id": 78,
+        "route_id": "VR-1500",
+        "sequence_num": 1,
+        "point_name": "VR1500_EIELSON",
+        "point_type": "ENTRY",
+        "latitude_dec": 64.6512,
+        "longitude_dec": -147.1211,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "VR1500_TANANA",
+        "segment_distance_nm": 43.5,
+        "geometry_wkt": null,
+        "next_lat_dec": 64.1512,
+        "next_lon_dec": -146.2512,
+        "bearing_deg": 142.67,
+        "cumulative_distance_nm": 0.0,
+        "arinc_lat": "64390432N",
+        "arinc_lon": "147071596W",
+        "human_lat": "64\u00b0 39' 04.32\" N",
+        "human_lon": "147\u00b0 07' 15.96\" W"
+      },
+      {
+        "segment_id": 79,
+        "route_id": "VR-1500",
+        "sequence_num": 2,
+        "point_name": "VR1500_TANANA",
+        "point_type": "TURN_POINT",
+        "latitude_dec": 64.1512,
+        "longitude_dec": -146.2512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": "VR1500_ALASKA",
+        "segment_distance_nm": 45.1,
+        "geometry_wkt": null,
+        "next_lat_dec": 63.6512,
+        "next_lon_dec": -145.3512,
+        "bearing_deg": 141.22,
+        "cumulative_distance_nm": 43.5,
+        "arinc_lat": "64090432N",
+        "arinc_lon": "146150432W",
+        "human_lat": "64\u00b0 09' 04.32\" N",
+        "human_lon": "146\u00b0 15' 04.32\" W"
+      },
+      {
+        "segment_id": 80,
+        "route_id": "VR-1500",
+        "sequence_num": 3,
+        "point_name": "VR1500_ALASKA",
+        "point_type": "EXIT",
+        "latitude_dec": 63.6512,
+        "longitude_dec": -145.3512,
+        "min_alt_ft": 200,
+        "max_alt_ft": 1500,
+        "width_left_nm": 5.0,
+        "width_right_nm": 5.0,
+        "next_point_name": null,
+        "segment_distance_nm": null,
+        "geometry_wkt": null,
+        "cumulative_distance_nm": 88.6,
+        "arinc_lat": "63390432N",
+        "arinc_lon": "145210432W",
+        "human_lat": "63\u00b0 39' 04.32\" N",
+        "human_lon": "145\u00b0 21' 04.32\" W"
+      }
+    ],
+    "total_distance_nm": 88.6,
+    "corridor_polygon": [
+      [
+        -146.966142,
+        64.701619
+      ],
+      [
+        -146.102022,
+        64.203283
+      ],
+      [
+        -145.204662,
+        63.703285
+      ],
+      [
+        -145.497201,
+        63.598967
+      ],
+      [
+        -146.399819,
+        64.098965
+      ],
+      [
+        -147.275482,
+        64.60062
+      ],
+      [
+        -146.966142,
+        64.701619
+      ]
+    ]
+  }
+]

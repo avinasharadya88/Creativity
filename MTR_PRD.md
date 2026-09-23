@@ -1,134 +1,109 @@
-# PRD: MTR App — FAA eNASR Military Training Route Converter & Dashboard
+# MTR App — product requirements
 
-**Version:** 1.0  
-**Date:** 2026-09-23  
-**Author:** Avinash Aradya  
-**Repo:** https://github.com/avinasharadya88/Creativity  
-**Live App:** https://mtrapp.ai.studio  
-
----
-
-## 1. Overview
-
-MTR App is a full-stack aviation web application that pulls FAA eNASR (Electronic National Airspace System Resource) data for Military Training Routes (MTRs) and makes it useful — both to humans and machines. It converts raw FAA route data into ARINC 424-23 compliant XML, renders interactive maps and altitude profiles, and lets users view, edit, and export route information without needing to touch raw data files.
-
-The app targets aviation professionals, air traffic controllers, flight briefers, and defense sector developers who currently have to navigate sprawling FAA data sources to find MTR information.
+Version: 1.0  
+Date: 2026-09-23  
+Author: Avinash Aradya  
+Repo: https://github.com/avinasharadya88/Creativity  
+Live app: https://mtrapp.ai.studio
 
 ---
 
-## 2. Problem Statement
+## Overview
 
-FAA MTR data lives in eNASR releases as flat CSV files (`MTR_BASE.csv`, `MTR_PTS.csv`) on a 28-day AIRAC cycle. Getting that data into a usable format for flight planning systems, avionics databases, or even basic situational awareness requires:
+MTR App is a full-stack aviation web application built around FAA eNASR Military Training Route data. It takes raw FAA route files and turns them into something actually usable: ARINC 424-23 XML, interactive maps with altitude profiles, plain-English flight briefs, and 132-character fixed-length ARINC 424 records — all from the same source, all in one place.
 
-- Manually parsing fixed-width or CSV records
-- Cross-referencing base route metadata with waypoint sequences
-- Converting coordinates into ARINC DMS format
-- Generating 132-character fixed-length ARINC 424 records by hand
-
-No publicly available tool does all of this in one place. MTR App closes that gap.
+The people who need this are flight operations staff, military airspace managers, aviation data integrators, and developers building flight planning tools. Right now they're manually cross-referencing eNASR CSV files, converting coordinates by hand, and writing ARINC records from scratch. MTR App replaces that workflow.
 
 ---
 
-## 3. Goals
+## The problem
 
-- Parse and store the complete set of active FAA MTR routes from eNASR data
-- Expose that data through an interactive, browser-based dashboard
+FAA MTR data comes as flat CSV files — `MTR_BASE.csv` and `MTR_PTS.csv` — published on a 28-day AIRAC cycle. To get anything useful out of them, you have to parse fixed-width or CSV records, cross-reference base route metadata against waypoint sequences, convert coordinates to ARINC DMS format, and generate 132-character fixed-length ARINC 424 records by hand. No existing tool handles all of this in one place.
+
+---
+
+## Goals
+
+- Parse and store the full set of active FAA MTR routes from eNASR data
+- Render that data through an interactive, browser-based dashboard
 - Generate ARINC 424-23 XML, 132-character fixed records, GeoJSON, and plain-English flight briefs from the same source
-- Let authorized users edit route data and sync changes to both cloud (Supabase) and local (SQLite) storage
-- Support bulk export for downstream avionics or FMS integration workflows
-- Keep the server dependency footprint minimal — zero external Python packages required
+- Let users edit route data and sync changes to both Supabase and local SQLite
+- Support bulk export for downstream avionics or FMS workflows
+- Run with zero external Python package dependencies
 
 ---
 
-## 4. Users
+## Users
 
-**Primary:** Flight operations staff, military airspace managers, and aviation data integrators who need MTR information in structured, machine-readable formats.
+Flight operations staff, military airspace managers, and aviation data integrators are the primary audience — people who need MTR information in structured, machine-readable formats for operational use.
 
-**Secondary:** Developers building flight planning tools or avionics databases who need a clean ARINC 424-23 data feed.
+Developers building flight planning tools or avionics databases need a clean ARINC 424-23 data feed and will likely hit the CLI and bulk export features most.
 
-**Tertiary:** Pilots and controllers who want a plain-English briefing for a specific MTR before filing or working traffic.
-
----
-
-## 5. Data Source
-
-**Source:** FAA eNASR (Electronic NASR — National Airspace System Resource)  
-**Cycle:** 28-day AIRAC releases  
-**Current Cycle:** AIRAC 2609 (as of September 2026)  
-**Key Files:** `MTR_BASE.csv`, `MTR_PTS.csv`
-
-The app ships pre-populated with 25 authentic FAA AIRAC Cycle 2609 MTR routes across three categories:
-
-- **IR (Instrument Routes):** IR-200, IR-211, IR-107, IR-120, IR-128, IR-135, IR-140, IR-160, IR-178, IR-300
-- **VR (Visual Routes):** VR-1254, VR-1265, VR-1001, VR-1002, VR-1020, VR-1355, VR-1360, VR-1410, VR-1450, VR-1500
-- **SR (Slow Speed Routes):** SR-101, SR-102, SR-103, SR-104, SR-105
-
-New AIRAC releases can be imported via CLI: `python3 -m mtr_app.import_nasr_csv`.
+Pilots and controllers rounding out the user base mostly want the plain-English briefing for a specific MTR before filing or working traffic.
 
 ---
 
-## 6. Core Features
+## Data source
 
-### 6.1 Route Browser & Directory
+Source: FAA eNASR (Electronic NASR — National Airspace System Resource)  
+Cycle: 28-day AIRAC releases  
+Current cycle: AIRAC 2609 (September 2026)  
+Key files: `MTR_BASE.csv`, `MTR_PTS.csv`
 
-A left-panel route directory with filter tabs (ALL / IR / VR / SR) and a search field. Users can filter by route name or controlling ARTCC. Selecting a route loads its map, altitude profile, and inspector panel simultaneously.
+The app ships with 25 active FAA AIRAC 2609 routes across three categories:
 
-### 6.2 Interactive Map
+- IR (Instrument Routes): IR-200, IR-211, IR-107, IR-120, IR-128, IR-135, IR-140, IR-160, IR-178, IR-300
+- VR (Visual Routes): VR-1254, VR-1265, VR-1001, VR-1002, VR-1020, VR-1355, VR-1360, VR-1410, VR-1450, VR-1500
+- SR (Slow Speed Routes): SR-101, SR-102, SR-103, SR-104, SR-105
 
-Center panel renders:
-- Route centerline path
-- Left/right corridor buffer polygons (ribbon visualization)
-- Waypoint markers labeled by type: `ENTRY`, `TURN`, `EXIT`
-- Click-to-popup with exact coordinates (ARINC DMS + decimal degrees), altitude limits, and leg distance
+New AIRAC releases import via CLI: `python3 -m mtr_app.import_nasr_csv`
 
-Basemap: OpenStreetMap standard layer via Leaflet. No watermarks, no external API keys required.
+---
 
-### 6.3 Altitude Envelope Profile
+## Features
 
-Canvas chart below the map plots floor and ceiling altitudes (in feet MSL) against cumulative route distance in nautical miles. For example, IR-200 plots 100 ft MSL floor to 18,000 ft MSL ceiling across its full corridor.
+### Route browser
 
-### 6.4 Multi-Format Inspector
+Left panel with filter tabs (ALL / IR / VR / SR) and a search field. Filter by route name or controlling ARTCC. Selecting a route loads the map, altitude profile, and inspector panel together.
+
+### Map
+
+Center panel shows the route centerline, left/right corridor buffer polygons, and waypoint markers typed as `ENTRY`, `TURN`, or `EXIT`. Click any waypoint for exact coordinates (ARINC DMS and decimal degrees), altitude limits, and leg distance.
+
+Basemap is OpenStreetMap standard via Leaflet. No external API keys, no watermarks.
+
+### Altitude profile
+
+Canvas chart below the map. Plots floor and ceiling altitudes in feet MSL against cumulative route distance in nautical miles. IR-200, for example, runs 100 ft MSL floor to 18,000 ft MSL ceiling across its full corridor length.
+
+### Inspector
 
 Right panel with four tabs:
 
 | Tab | Output |
 |-----|--------|
 | ARINC 424-23 XML | Supplement 23 compliant XML, schema-validated |
-| Plain-English Brief | Human-readable operational brief for pilots/controllers |
-| 132-Char Fixed Records | `PF` header + `PG` segment fixed-length ARINC 424 records |
-| Leg Sequence Table | Tabular view of all waypoints with sequence, coordinates, types |
+| Plain-English brief | Operational brief for pilots and controllers |
+| 132-char fixed records | `PF` header + `PG` segment fixed-length ARINC 424 records |
+| Leg sequence table | All waypoints with sequence, coordinates, and types |
 
 Each tab has a copy button. XML and `.dat` formats have individual download buttons.
 
-### 6.5 Route Editor
+### Route editor
 
-Accessible via the `✎ Edit Route` button on any active route. Opens a modal pre-filled with the route's current data. Editable fields:
+Click `✎ Edit Route` on any active route. A modal opens pre-filled with the route's current data. You can change the route designator, managing base, controlling ARTCC, floor/ceiling altitudes, corridor width, and individual waypoints (name, type, lat/lon, sequence). Add or remove waypoints from the sequence. Saving writes to both Supabase and local SQLite and refreshes the map, altitude profile, XML, and brief immediately.
 
-- Route designator, managing base, controlling ARTCC
-- Floor/ceiling altitudes, corridor width
-- Individual waypoint names, types, lat/lon, sequence order
-- Add or remove waypoints
+### New route import
 
-Saving pushes changes to both Supabase and local SQLite, then refreshes the map, altitude profile, XML, and brief in real time.
+`＋ New / Import MTR` in the header. Manual form or paste JSON/GeoJSON (standard GeoJSON Feature or eNASR route JSON). On save, translates to ARINC 424-23 and stores it.
 
-### 6.6 New Route Import
+### Bulk export
 
-`＋ New / Import MTR` in the header. Two input modes:
-- Manual form entry
-- Paste JSON / GeoJSON (standard GeoJSON Feature or eNASR route JSON)
+`Export All ▾` in the header generates an ARINC 424-23 XML file, a fixed-width `.dat` file, or a GeoJSON FeatureCollection covering all routes.
 
-On save, the app translates input to ARINC 424-23 format and stores it.
+### CLI
 
-### 6.7 Bulk Export
-
-`Export All ▾` dropdown in the header. Generates:
-- ARINC 424-23 XML file (all 25+ routes)
-- Fixed-width `.dat` file (all routes)
-- GeoJSON FeatureCollection (all routes)
-
-### 6.8 CLI Tooling
-
-`mtr_cli.py` supports:
+`mtr_cli.py` for batch processing:
 
 ```
 python3 mtr_cli.py --list
@@ -141,53 +116,50 @@ python3 mtr_cli.py --validate
 
 ---
 
-## 7. Data Architecture
+## Data architecture
 
 ### Storage
 
-**Dual storage** — Supabase (PostgreSQL via REST) + local SQLite (`enasr-geospatial.db`):
-
-- Supabase is primary when online and configured
-- SQLite is automatic fallback when offline or unconfigured
-- No external Python packages required — Supabase REST calls use `urllib.request` from stdlib
+Supabase (PostgreSQL via REST) is the primary store when the app is online and configured. SQLite (`enasr-geospatial.db`) is the automatic fallback. Supabase calls use `urllib.request` from Python stdlib — no `pip install` required.
 
 ### Database
 
-11 domain tables covering airports, runways, NAVAIDs, fixes, airways, airway segments, airspace, radio frequencies, procedures, procedure legs, and weather stations.
+11 domain tables: airports, runways, NAVAIDs, fixes, airways, airway segments, airspace, radio frequencies, procedures, procedure legs, and weather stations.
 
-**Data quality:** 100% integrity across all 8 automated test suites (as of 2026-09-15 audit):
-- Zero unexpected NULLs across 50 mandatory column rules
-- Zero foreign key violations
-- 37 coordinate pairs validated against WGS84 bounds
-- 31 WKT geometries (POINT, LINESTRING, POLYGON) fully valid
+Data quality audit run 2026-09-15 against all 8 automated test suites — 100% pass rate:
+
+- 0 unexpected NULLs across 50 mandatory column rules
+- 0 foreign key violations
+- 37 coordinate pairs within WGS84 bounds
+- 31 WKT geometries (POINT, LINESTRING, POLYGON) valid
 - 2 airway routes with contiguous, gap-free sequence topology
 
-### Standards Compliance
+### Standards
 
-- ARINC 424-23 (XML — Supplement 23 for Government Aviation Data)
+- ARINC 424-23 XML (Supplement 23 for Government Aviation Data)
 - ARINC 424 132-character fixed-length record format
 - WGS84 coordinate system
-- FAA AIRAC 28-day cycle data cadence
+- FAA AIRAC 28-day cycle cadence
 - ICAO/FAA 3-4 character location identifiers
 - VHF aeronautical frequency band validation (108.0–137.0 MHz)
 
 ---
 
-## 8. Tech Stack
+## Tech stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | HTML/CSS/JS, Leaflet.js (mapping), Canvas API (altitude chart) |
-| Backend | Python 3, `run.py` server on port 8080 |
-| API Server | `server.ts` (TypeScript/Node) |
-| Cloud DB | Supabase (PostgreSQL) via REST API |
+| Frontend | HTML/CSS/JS, Leaflet.js, Canvas API |
+| Backend | Python 3, `run.py` on port 8080 |
+| API server | `server.ts` (TypeScript/Node) |
+| Cloud DB | Supabase PostgreSQL via REST |
 | Local DB | SQLite (`enasr-geospatial.db`) |
-| Data | GeoJSON, eNASR CSV, ARINC 424-23 XML |
+| Data formats | GeoJSON, eNASR CSV, ARINC 424-23 XML |
 | Deployment | Google AI Studio (`mtrapp.ai.studio`) |
 
 ---
 
-## 9. Local Setup
+## Local setup
 
 ```bash
 git clone https://github.com/avinasharadya88/Creativity.git
@@ -196,43 +168,42 @@ python3 run.py --server 8080
 # Open http://localhost:8080
 ```
 
-No `pip install` required. Zero external Python package dependencies.
+No `pip install`. To share with reviewers without deploying:
 
-To share locally with reviewers:
 ```bash
-# Option A: Cloudflare tunnel
+# Cloudflare tunnel
 cloudflared tunnel --url http://localhost:8080
 
-# Option B: SSH tunnel (no install)
+# SSH tunnel (no install needed)
 ssh -p 443 -R 80:localhost:8080 a.pinggy.io
 ```
 
 ---
 
-## 10. What's Not in Scope (v1)
+## Out of scope for v1
 
 - Real-time FAA NOTAM overlay on MTR corridors
-- User authentication / role-based access control for the editor
+- User authentication and role-based access for the editor
 - Mobile-optimized responsive layout
-- Automated AIRAC cycle update scheduler (currently manual CLI import)
-- Integration with EFB (Electronic Flight Bag) platforms
-- ATC clearance workflow or CPDLC integration
+- Automated AIRAC cycle update scheduling (currently manual CLI import)
+- EFB (Electronic Flight Bag) platform integration
+- ATC clearance workflows or CPDLC
 
 ---
 
-## 11. Success Metrics
+## Success criteria
 
 - All 25 pre-seeded MTR routes load, render, and export correctly
-- ARINC 424-23 XML output passes schema validation for all routes
-- Route edits persist correctly to both Supabase and SQLite
-- CLI export commands complete without errors across all formats
+- ARINC 424-23 XML passes schema validation for all routes
+- Route edits persist to both Supabase and SQLite
+- CLI export works across all formats without errors
 - 13/13 automated unit and integration tests pass
 
 ---
 
-## 12. Open Questions
+## Open questions
 
-- Should the app support direct FAA NASR ZIP download and auto-import on a schedule, or keep the 28-day manual import via CLI?
-- Is there a requirement to support ARINC 424-18 or earlier fixed-record formats for legacy FMS compatibility?
-- What's the target user permission model — single owner, team with roles, or public read access?
-- Any plans to open-source or publish the app beyond the current GitHub repo?
+- Should the app fetch and auto-import new FAA NASR ZIP releases on a schedule, or stay with the current manual CLI approach?
+- Is there a requirement for ARINC 424-18 or earlier fixed-record formats for legacy FMS compatibility?
+- What's the intended permission model — single owner, team with roles, or public read access?
+- Any plans to list this as a standalone open-source project rather than a folder inside the Creativity repo?

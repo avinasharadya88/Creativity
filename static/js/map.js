@@ -15,7 +15,7 @@ class MTRMap {
 
     this.showCorridor = true;
     this.showWaypoints = true;
-    this.currentBasemapType = 'dark';
+    this.currentBasemapType = 'sat';
     this.tileLayers = {};
 
     this.initMap();
@@ -28,27 +28,20 @@ class MTRMap {
       attributionControl: false
     }).setView([35.5, -117.5], 7);
 
-    // 1. Dark Tactical Basemap (CartoDB Dark Matter)
-    this.tileLayers.dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 20,
-      subdomains: 'abcd',
-      attribution: '&copy; CartoDB &copy; OpenStreetMap'
-    });
-
-    // 2. Satellite Basemap (Esri World Imagery)
+    // 1. Satellite Imagery (Esri World Imagery - Clean, high-res aerial, zero watermark/API key)
     this.tileLayers.sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 18,
       attribution: '&copy; Esri, Maxar, Earthstar Geographics'
     });
 
-    // 3. OpenStreetMap Light (Standard)
+    // 2. OpenStreetMap Standard (Clean, zero watermark/API key)
     this.tileLayers.osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap contributors'
     });
 
-    // Default to Dark HUD Basemap
-    this.tileLayers.dark.addTo(this.map);
+    // Default to Satellite Basemap
+    this.tileLayers.sat.addTo(this.map);
 
     // Layer Groups
     this.corridorLayer = L.layerGroup().addTo(this.map);

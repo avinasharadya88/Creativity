@@ -112,23 +112,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     filtered.forEach(r => {
-      const card = document.createElement('div');
-      card.className = `route-card ${r.route_id === selectedRouteId ? 'selected' : ''}`;
-      card.dataset.routeId = r.route_id;
-
       let badgeClass = 'badge-ir';
-      if (r.route_type === 'VR') badgeClass = 'badge-vr';
-      if (r.route_type === 'SR') badgeClass = 'badge-sr';
+      let cardTypeClass = 'card-ir';
+      if (r.route_type === 'VR') {
+        badgeClass = 'badge-vr';
+        cardTypeClass = 'card-vr';
+      } else if (r.route_type === 'SR') {
+        badgeClass = 'badge-sr';
+        cardTypeClass = 'card-sr';
+      }
+
+      const card = document.createElement('div');
+      card.className = `route-card ${cardTypeClass} ${r.route_id === selectedRouteId ? 'selected' : ''}`;
+      card.dataset.routeId = r.route_id;
 
       card.innerHTML = `
         <div class="route-card-header">
           <span class="route-card-id">${r.route_id}</span>
           <span class="badge ${badgeClass}">${r.route_type}</span>
         </div>
-        <div class="route-card-name">${r.route_name || 'Military Training Route'}</div>
+        <div class="route-card-name" title="${escapeHtml(r.route_name || 'Military Training Route')}">${escapeHtml(r.route_name || 'Military Training Route')}</div>
         <div class="route-card-meta">
-          <span>${r.waypoint_count || 0} waypoints</span>
-          <span>${(r.floor_alt_ft || 0).toLocaleString()} - ${(r.ceiling_alt_ft || 0).toLocaleString()} ft</span>
+          <span class="meta-wp-pill">${r.waypoint_count || 0} pts</span>
+          <span class="meta-alt-range">${(r.floor_alt_ft || 0).toLocaleString()} - ${(r.ceiling_alt_ft || 0).toLocaleString()} ft</span>
         </div>
       `;
 

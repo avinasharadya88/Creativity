@@ -1,6 +1,7 @@
 /**
  * Leaflet Map Controller for Military Training Routes.
- * Renders Centerline paths, Corridor boundary ribbon polygons, and Waypoint markers.
+ * Tactical Cyber-Aerospace Avionics Renderer with Multi-Layer Basemaps,
+ * Luminous Corridors, Glowing Centerlines, and Radar-styled Waypoint Markers.
  */
 
 class MTRMap {
@@ -14,6 +15,8 @@ class MTRMap {
 
     this.showCorridor = true;
     this.showWaypoints = true;
+    this.currentBasemapType = 'dark';
+    this.tileLayers = {};
 
     this.initMap();
   }
@@ -25,22 +28,50 @@ class MTRMap {
       attributionControl: false
     }).setView([35.5, -117.5], 7);
 
-    // OpenStreetMap Standard (Light Mode, Open Source, No API Key)
-    const lightTileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    // 1. Dark Tactical Basemap (CartoDB Dark Matter)
+    this.tileLayers.dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 20,
+      subdomains: 'abcd',
+      attribution: '&copy; CartoDB &copy; OpenStreetMap'
     });
-    lightTileLayer.addTo(this.map);
 
-    // Create Layer Groups
+    // 2. Satellite Basemap (Esri World Imagery)
+    this.tileLayers.sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 18,
+      attribution: '&copy; Esri, Maxar, Earthstar Geographics'
+    });
+
+    // 3. OpenStreetMap Light (Standard)
+    this.tileLayers.osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    });
+
+    // Default to Dark HUD Basemap
+    this.tileLayers.dark.addTo(this.map);
+
+    // Layer Groups
     this.corridorLayer = L.layerGroup().addTo(this.map);
     this.centerlineLayer = L.layerGroup().addTo(this.map);
     this.waypointLayer = L.layerGroup().addTo(this.map);
 
-    // Map resize trigger when layout settles
+    // Settle layout trigger
     setTimeout(() => {
       this.map.invalidateSize();
     }, 200);
+  }
+
+  setBasemap(type) {
+    if (!this.tileLayers[type] || this.currentBasemapType === type) return;
+
+    Object.values(this.tileLayers).forEach(layer => {
+      if (this.map.hasLayer(layer)) {
+        this.map.removeLayer(layer);
+      }
+    });
+
+    this.tileLayers[type].addTo(this.map);
+    this.currentBasemapType = type;
   }
 
   renderRoute(routeDetails) {
@@ -50,19 +81,29 @@ class MTRMap {
     }
 
     const segments = routeDetails.segments;
-    const isIFR = (routeDetails.route_type || "").toUpperCase() === "IR";
-    const primaryColor = isIFR ? "#2563eb" : "#059669"; // Dark Blue for IFR, Dark Green for VFR
-    const corridorFill = isIFR ? "rgba(37, 99, 235, 0.22)" : "rgba(5, 150, 105, 0.22)";
-    const corridorBorder = isIFR ? "rgba(37, 99, 235, 0.6)" : "rgba(5, 150, 105, 0.6)";
+    const rType = (routeDetails.route_type || "").toUpperCase();
+    
+    // Avionics Palette
+    let primaryColor = "#00f0ff"; // IR - Cyan
+    let corridorFill = "rgba(0, 240, 255, 0.16)";
+    let corridorBorder = "rgba(0, 240, 255, 0.75)";
+
+    if (rType === "VR") {
+      primaryColor = "#00ff9d"; // VR - Tactical Emerald
+      corridorFill = "rgba(0, 255, 157, 0.16)";
+      corridorBorder = "rgba(0, 255, 157, 0.75)";
+    } else if (rType === "SR") {
+      primaryColor = "#ffb703"; // SR - Amber
+      corridorFill = "rgba(255, 183, 3, 0.16)";
+      corridorBorder = "rgba(255, 183, 3, 0.75)";
+    }
 
     const latLngs = [];
 
     // 1. Build Centerline Points
     segments.forEach((seg, idx) => {
-      const p = [seg.latitude_dec, seg.longitude_dec];
-      latLngs.push(p);
+      latLngs.push([seg.latitude_dec, seg.longitude_dec]);
 
-      // If last segment has next point, include it
       if (idx === segments.length - 1 && seg.next_lat_dec != null && seg.next_lon_dec != null) {
         latLngs.push([seg.next_lat_dec, seg.next_lon_dec]);
       }
@@ -70,44 +111,54 @@ class MTRMap {
 
     // 2. Render Corridor Ribbon Polygon
     if (routeDetails.corridor_polygon && routeDetails.corridor_polygon.length > 0) {
-      // corridor_polygon has [ [lon, lat], ... ]
       const polygonLatLngs = routeDetails.corridor_polygon.map(coord => [coord[1], coord[0]]);
       
       const polygon = L.polygon(polygonLatLngs, {
         color: corridorBorder,
-        weight: 1.5,
-        dashArray: "4, 4",
+        weight: 1.8,
+        dashArray: "6, 4",
         fillColor: corridorFill,
-        fillOpacity: 0.7,
+        fillOpacity: 0.85,
         interactive: true
       });
 
       polygon.bindTooltip(`
-        <div style="font-family: Inter, sans-serif; font-size: 11px;">
-          <b>${routeDetails.route_id} Corridor</b><br>
-          Width: ${routeDetails.route_width_nm || 10.0} NM<br>
-          Envelope: ${routeDetails.floor_alt_ft || 0} - ${routeDetails.ceiling_alt_ft || 0} ft MSL
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.5;">
+          <b style="color: ${primaryColor}; font-size: 12px;">${routeDetails.route_id} Corridor</b><br>
+          <span style="color: #94a3b8;">Width:</span> <b style="color: #fff;">${routeDetails.route_width_nm || 10.0} NM</b><br>
+          <span style="color: #94a3b8;">Envelope:</span> <b style="color: #fff;">${(routeDetails.floor_alt_ft || 0).toLocaleString()} - ${(routeDetails.ceiling_alt_ft || 0).toLocaleString()} ft MSL</b>
         </div>
       `, { sticky: true });
 
       this.corridorLayer.addLayer(polygon);
     }
 
-    // 3. Render Centerline Polyline
+    // 3. Render Centerline with Dual-stroke Avionics Glow
     if (latLngs.length > 1) {
+      // Glow underlay polyline
+      const glowLine = L.polyline(latLngs, {
+        color: primaryColor,
+        weight: 8,
+        opacity: 0.25,
+        lineCap: 'round',
+        lineJoin: 'round'
+      });
+      this.centerlineLayer.addLayer(glowLine);
+
+      // Core sharp polyline
       const centerline = L.polyline(latLngs, {
         color: primaryColor,
-        weight: 3.5,
+        weight: 3.2,
         opacity: 0.95,
         lineCap: 'round',
         lineJoin: 'round'
       });
 
       centerline.bindTooltip(`
-        <div style="font-family: Inter, sans-serif; font-size: 11px;">
-          <b>${routeDetails.route_id} Centerline</b><br>
-          Managing Unit: ${routeDetails.originating_agency || ''}<br>
-          Distance: ${routeDetails.total_distance_nm || ''} NM
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.5;">
+          <b style="color: ${primaryColor}; font-size: 12px;">${routeDetails.route_id} Flight Path</b><br>
+          <span style="color: #94a3b8;">Unit:</span> ${routeDetails.originating_agency || ''}<br>
+          <span style="color: #94a3b8;">Total Dist:</span> <b style="color: #fff;">${routeDetails.total_distance_nm || ''} NM</b>
         </div>
       `, { sticky: true });
 
@@ -115,30 +166,44 @@ class MTRMap {
     }
 
     // 4. Render Waypoint Markers
-    segments.forEach((seg, idx) => {
+    segments.forEach((seg) => {
       const lat = seg.latitude_dec;
       const lon = seg.longitude_dec;
       const ptType = (seg.point_type || "WAYPOINT").toUpperCase();
       const ptName = seg.point_name || `PT_${seg.sequence_num}`;
       
-      let badgeBg = "#3b82f6";
-      if (ptType === "ENTRY") badgeBg = "#10b981";
-      if (ptType.includes("TURN")) badgeBg = "#f59e0b";
-      if (ptType === "EXIT") badgeBg = "#ef4444";
+      let badgeBg = "linear-gradient(135deg, #0284c7, #0369a1)";
+      let borderColor = "rgba(56, 189, 248, 0.8)";
+      let glowColor = "rgba(56, 189, 248, 0.4)";
+
+      if (ptType === "ENTRY") {
+        badgeBg = "linear-gradient(135deg, #059669, #10b981)";
+        borderColor = "rgba(0, 255, 157, 0.9)";
+        glowColor = "rgba(0, 255, 157, 0.5)";
+      } else if (ptType.includes("TURN")) {
+        badgeBg = "linear-gradient(135deg, #d97706, #f59e0b)";
+        borderColor = "rgba(255, 183, 3, 0.9)";
+        glowColor = "rgba(255, 183, 3, 0.5)";
+      } else if (ptType === "EXIT") {
+        badgeBg = "linear-gradient(135deg, #dc2626, #ef4444)";
+        borderColor = "rgba(255, 71, 87, 0.9)";
+        glowColor = "rgba(255, 71, 87, 0.5)";
+      }
 
       const markerHtml = `
         <div style="
-          background-color: ${badgeBg};
-          color: white;
+          background: ${badgeBg};
+          color: #fff;
           font-family: 'JetBrains Mono', monospace;
-          font-size: 9px;
+          font-size: 9.5px;
           font-weight: 700;
-          padding: 2px 5px;
-          border-radius: 3px;
-          border: 1px solid rgba(255,255,255,0.7);
-          box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+          padding: 2.5px 6px;
+          border-radius: 4px;
+          border: 1px solid ${borderColor};
+          box-shadow: 0 0 10px ${glowColor}, 0 2px 8px rgba(0,0,0,0.8);
           white-space: nowrap;
           text-align: center;
+          letter-spacing: 0.3px;
         ">
           ${ptName}
         </div>
@@ -147,21 +212,24 @@ class MTRMap {
       const icon = L.divIcon({
         className: 'custom-waypoint-icon',
         html: markerHtml,
-        iconSize: [60, 20],
-        iconAnchor: [30, 10]
+        iconSize: [64, 22],
+        iconAnchor: [32, 11]
       });
 
       const marker = L.marker([lat, lon], { icon: icon });
 
       const popupHtml = `
-        <div style="font-family: Inter, sans-serif; font-size: 11px; line-height: 1.5; min-width: 180px;">
-          <b style="font-size: 13px; color: ${primaryColor};">${ptName}</b> (${ptType})<br>
-          <b>Route:</b> ${routeDetails.route_id} [Leg ${seg.sequence_num}]<br>
-          <b>Coords (Human):</b> ${seg.human_lat}, ${seg.human_lon}<br>
-          <b>Coords (ARINC):</b> ${seg.arinc_lat}, ${seg.arinc_lon}<br>
-          <b>Altitude:</b> ${seg.min_alt_ft || routeDetails.floor_alt_ft} - ${seg.max_alt_ft || routeDetails.ceiling_alt_ft} ft MSL<br>
-          <b>Corridor:</b> ${seg.width_left_nm || 5.0} NM L / ${seg.width_right_nm || 5.0} NM R<br>
-          ${seg.next_point_name ? `<b>Next Point:</b> ${seg.next_point_name} (${seg.segment_distance_nm || ''} NM)` : ''}
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.6; min-width: 200px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; border-bottom: 1px solid rgba(56, 189, 248, 0.2); padding-bottom: 4px;">
+            <b style="font-size: 13px; color: ${primaryColor};">${ptName}</b>
+            <span style="font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(56,189,248,0.2); color: #38bdf8;">${ptType}</span>
+          </div>
+          <div><span style="color:#94a3b8;">Route:</span> <b>${routeDetails.route_id}</b> [Leg #${seg.sequence_num}]</div>
+          <div><span style="color:#94a3b8;">Position:</span> ${seg.human_lat}, ${seg.human_lon}</div>
+          <div><span style="color:#94a3b8;">ARINC Form:</span> <code style="color:#a5f3fc;">${seg.arinc_lat || ''}, ${seg.arinc_lon || ''}</code></div>
+          <div><span style="color:#94a3b8;">Altitude:</span> ${(seg.min_alt_ft || routeDetails.floor_alt_ft || 0).toLocaleString()} - ${(seg.max_alt_ft || routeDetails.ceiling_alt_ft || 0).toLocaleString()} ft</div>
+          <div><span style="color:#94a3b8;">Corridor:</span> ${seg.width_left_nm || 5.0} NM L / ${seg.width_right_nm || 5.0} NM R</div>
+          ${seg.next_point_name ? `<div><span style="color:#94a3b8;">Next Leg:</span> <b>${seg.next_point_name}</b> (${seg.segment_distance_nm || '-'} NM)</div>` : ''}
         </div>
       `;
 

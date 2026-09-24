@@ -1,6 +1,7 @@
 /**
  * Canvas-based Vertical Altitude Profile Visualizer.
  * Renders floor, ceiling, and flight corridor envelope across route distance in Nautical Miles.
+ * Enhanced with Cyber-Aerospace HUD Graticule, Neon Envelope Shading, and Interactive Telemetry Scanline.
  */
 
 class MTRProfileChart {
@@ -8,14 +9,35 @@ class MTRProfileChart {
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
     this.route = null;
+    this.hoverX = null;
+    this.hoverData = null;
 
     if (this.canvas) {
       window.addEventListener('resize', () => this.draw());
+
+      // Interactive hover scanline
+      this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+      this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
     }
   }
 
   setRoute(routeDetails) {
     this.route = routeDetails;
+    this.hoverX = null;
+    this.hoverData = null;
+    this.draw();
+  }
+
+  handleMouseMove(e) {
+    if (!this.route || !this.route.segments || this.route.segments.length === 0) return;
+    const rect = this.canvas.getBoundingClientRect();
+    this.hoverX = e.clientX - rect.left;
+    this.draw();
+  }
+
+  handleMouseLeave() {
+    this.hoverX = null;
+    this.hoverData = null;
     this.draw();
   }
 
@@ -37,7 +59,7 @@ class MTRProfileChart {
 
     if (!this.route || !this.route.segments || this.route.segments.length === 0) {
       ctx.fillStyle = "#64748b";
-      ctx.font = "12px Inter, sans-serif";
+      ctx.font = "12px 'Inter', sans-serif";
       ctx.textAlign = "center";
       ctx.fillText("Select a route to display its vertical altitude profile", width / 2, height / 2);
       return;
@@ -46,7 +68,7 @@ class MTRProfileChart {
     const segments = this.route.segments;
     const totalDist = this.route.total_distance_nm || 1.0;
     
-    // Find max altitude to set scale
+    // Altitude Scale
     let maxAlt = Math.max(
       this.route.ceiling_alt_ft || 15000,
       ...segments.map(s => s.max_alt_ft || 0)
@@ -55,20 +77,19 @@ class MTRProfileChart {
     if (maxAlt < 4000) maxAlt = 4000;
 
     // Margins
-    const padLeft = 60;
-    const padRight = 30;
-    const padTop = 20;
+    const padLeft = 65;
+    const padRight = 35;
+    const padTop = 24;
     const padBottom = 26;
 
-    const plotW = width - padLeft - padRight;
-    const plotH = height - padTop - padBottom;
+    const plotW = Math.max(10, width - padLeft - padRight);
+    const plotH = Math.max(10, height - padTop - padBottom);
 
-    // Helper functions for coordinate transformation
     const xForDist = (distNM) => padLeft + (distNM / totalDist) * plotW;
     const yForAlt = (altFt) => padTop + plotH - (altFt / maxAlt) * plotH;
 
-    // 1. Draw Grid Lines
-    ctx.strokeStyle = "#1e293b";
+    // 1. Draw Tactical Grid Background
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
     ctx.lineWidth = 1;
     ctx.fillStyle = "#64748b";
     ctx.font = "9.5px 'JetBrains Mono', monospace";
@@ -82,12 +103,15 @@ class MTRProfileChart {
       ctx.moveTo(padLeft, y);
       ctx.lineTo(width - padRight, y);
       ctx.stroke();
+
+      ctx.fillStyle = i === altSteps ? "#94a3b8" : "#64748b";
       ctx.fillText(`${alt.toLocaleString()} ft`, padLeft - 8, y + 3);
     }
 
-    // Distance X-Axis labels
+    // Distance X-Axis
     ctx.textAlign = "center";
-    const distSteps = 5;
+    ctx.fillStyle = "#64748b";
+    const distSteps = Math.min(8, Math.max(4, Math.floor(plotW / 80)));
     for (let i = 0; i <= distSteps; i++) {
       const d = (totalDist / distSteps) * i;
       const x = xForDist(d);
@@ -98,8 +122,7 @@ class MTRProfileChart {
       ctx.fillText(`${d.toFixed(0)} NM`, x, padTop + plotH + 16);
     }
 
-    // 2. Build Profile Step Points
-    // Points along route with start and end of each leg
+    // 2. Build Profile Points
     const profilePoints = [];
     let curDist = 0;
 
@@ -114,7 +137,8 @@ class MTRProfileChart {
         minAlt: minA,
         maxAlt: maxA,
         name: seg.point_name,
-        type: seg.point_type
+        type: seg.point_type,
+        seq: seg.sequence_num || i + 1
       });
       curDist += legDist;
     });
@@ -125,16 +149,19 @@ class MTRProfileChart {
     const isIFR = (this.route.route_type || "").toUpperCase() === "IR";
     const gradient = ctx.createLinearGradient(0, padTop, 0, padTop + plotH);
     if (isIFR) {
-      gradient.addColorStop(0, "rgba(245, 158, 11, 0.25)");
-      gradient.addColorStop(1, "rgba(56, 189, 248, 0.1)");
+      gradient.addColorStop(0, "rgba(255, 183, 3, 0.28)");
+      gradient.addColorStop(0.5, "rgba(0, 240, 255, 0.16)");
+      gradient.addColorStop(1, "rgba(0, 240, 255, 0.04)");
     } else {
-      gradient.addColorStop(0, "rgba(16, 185, 129, 0.25)");
-      gradient.addColorStop(1, "rgba(16, 185, 129, 0.05)");
+      gradient.addColorStop(0, "rgba(255, 183, 3, 0.28)");
+      gradient.addColorStop(0.5, "rgba(0, 255, 157, 0.16)");
+      gradient.addColorStop(1, "rgba(0, 255, 157, 0.04)");
     }
 
     ctx.fillStyle = gradient;
     ctx.beginPath();
-    // Top line (ceiling) left to right
+    
+    // Top line (ceiling)
     profilePoints.forEach((p, idx) => {
       const x1 = xForDist(p.xStart);
       const x2 = xForDist(p.xEnd);
@@ -144,7 +171,7 @@ class MTRProfileChart {
       ctx.lineTo(x2, yMax);
     });
 
-    // Bottom line (floor) right to left
+    // Bottom line (floor)
     for (let idx = profilePoints.length - 1; idx >= 0; idx--) {
       const p = profilePoints[idx];
       const x1 = xForDist(p.xStart);
@@ -156,9 +183,11 @@ class MTRProfileChart {
     ctx.closePath();
     ctx.fill();
 
-    // 4. Draw Ceiling Profile Line (Amber)
-    ctx.strokeStyle = "#f59e0b";
-    ctx.lineWidth = 2;
+    // 4. Draw Ceiling Profile Line (Luminous Amber)
+    ctx.strokeStyle = "#ffb703";
+    ctx.lineWidth = 2.2;
+    ctx.shadowColor = "rgba(255, 183, 3, 0.5)";
+    ctx.shadowBlur = 6;
     ctx.beginPath();
     profilePoints.forEach((p, idx) => {
       const x1 = xForDist(p.xStart);
@@ -169,10 +198,14 @@ class MTRProfileChart {
       ctx.lineTo(x2, yMax);
     });
     ctx.stroke();
+    ctx.shadowBlur = 0; // reset
 
-    // 5. Draw Floor Profile Line (Green/Cyan)
-    ctx.strokeStyle = isIFR ? "#38bdf8" : "#10b981";
-    ctx.lineWidth = 2;
+    // 5. Draw Floor Profile Line (Luminous Cyan / Emerald)
+    const floorColor = isIFR ? "#00f0ff" : "#00ff9d";
+    ctx.strokeStyle = floorColor;
+    ctx.lineWidth = 2.2;
+    ctx.shadowColor = isIFR ? "rgba(0, 240, 255, 0.5)" : "rgba(0, 255, 157, 0.5)";
+    ctx.shadowBlur = 6;
     ctx.beginPath();
     profilePoints.forEach((p, idx) => {
       const x1 = xForDist(p.xStart);
@@ -183,15 +216,16 @@ class MTRProfileChart {
       ctx.lineTo(x2, yMin);
     });
     ctx.stroke();
+    ctx.shadowBlur = 0; // reset
 
-    // 6. Draw Waypoint Markers & Vertical Guides
-    ctx.font = "9px 'JetBrains Mono', monospace";
+    // 6. Draw Waypoint Altitude Needles & Beads
+    ctx.font = "9.5px 'JetBrains Mono', monospace";
     profilePoints.forEach((p) => {
       const x = xForDist(p.xStart);
       
-      // Vertical dashed line
-      ctx.strokeStyle = "rgba(148, 163, 184, 0.3)";
-      ctx.setLineDash([2, 3]);
+      // Vertical dashed needle
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.35)";
+      ctx.setLineDash([3, 3]);
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(x, padTop);
@@ -199,25 +233,32 @@ class MTRProfileChart {
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Waypoint circle
+      // Floor node bead
       const yFloor = yForAlt(p.minAlt);
-      ctx.fillStyle = "#38bdf8";
+      ctx.fillStyle = floorColor;
       ctx.beginPath();
-      ctx.arc(x, yFloor, 3, 0, Math.PI * 2);
+      ctx.arc(x, yFloor, 3.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Waypoint Label
-      ctx.fillStyle = "#cbd5e1";
+      // Ceiling node bead
+      const yCeiling = yForAlt(p.maxAlt);
+      ctx.fillStyle = "#ffb703";
+      ctx.beginPath();
+      ctx.arc(x, yCeiling, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Waypoint Name Header Badge
+      ctx.fillStyle = "#e2e8f0";
       ctx.textAlign = "center";
-      ctx.fillText(p.name, x, padTop - 5);
+      ctx.fillText(p.name, x, padTop - 7);
     });
 
-    // Last point
+    // Final point needle
     if (profilePoints.length > 0) {
       const lastP = profilePoints[profilePoints.length - 1];
       const xLast = xForDist(lastP.xEnd);
-      ctx.strokeStyle = "rgba(148, 163, 184, 0.3)";
-      ctx.setLineDash([2, 3]);
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.35)";
+      ctx.setLineDash([3, 3]);
       ctx.beginPath();
       ctx.moveTo(xLast, padTop);
       ctx.lineTo(xLast, padTop + plotH);
@@ -225,10 +266,56 @@ class MTRProfileChart {
       ctx.setLineDash([]);
       
       const lastSeg = segments[segments.length - 1];
-      const lastPtName = lastSeg.next_point_name || "END";
-      ctx.fillStyle = "#cbd5e1";
+      const lastPtName = lastSeg.next_point_name || "EXIT";
+      ctx.fillStyle = "#e2e8f0";
       ctx.textAlign = "center";
-      ctx.fillText(lastPtName, xLast, padTop - 5);
+      ctx.fillText(lastPtName, xLast, padTop - 7);
+    }
+
+    // 7. Interactive Hover Scanline & Telemetry Tooltip
+    if (this.hoverX != null && this.hoverX >= padLeft && this.hoverX <= padLeft + plotW) {
+      const hoverNM = ((this.hoverX - padLeft) / plotW) * totalDist;
+      
+      // Find current leg
+      let curLeg = profilePoints[0];
+      for (const p of profilePoints) {
+        if (hoverNM >= p.xStart && hoverNM <= p.xEnd) {
+          curLeg = p;
+          break;
+        }
+      }
+
+      // Draw Laser Scanline
+      ctx.strokeStyle = "#00f0ff";
+      ctx.lineWidth = 1.2;
+      ctx.shadowColor = "rgba(0, 240, 255, 0.8)";
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.moveTo(this.hoverX, padTop);
+      ctx.lineTo(this.hoverX, padTop + plotH);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Telemetry Box
+      const tipText = `${hoverNM.toFixed(1)} NM | Alt: ${curLeg.minAlt.toLocaleString()}-${curLeg.maxAlt.toLocaleString()} ft`;
+      ctx.font = "10px 'JetBrains Mono', monospace";
+      const textW = ctx.measureText(tipText).width;
+      
+      let tipX = this.hoverX + 10;
+      if (tipX + textW + 16 > width) tipX = this.hoverX - textW - 22;
+      const tipY = padTop + 14;
+
+      ctx.fillStyle = "rgba(3, 7, 18, 0.9)";
+      ctx.strokeStyle = "#00f0ff";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(tipX, tipY - 12, textW + 14, 20, 4);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#00f0ff";
+      ctx.textAlign = "left";
+      ctx.fillText(tipText, tipX + 7, tipY + 2);
     }
   }
 }

@@ -305,6 +305,18 @@ document.addEventListener('DOMContentLoaded', () => {
     mtrMap.fitCurrentBounds();
   });
 
+  // Basemap Switcher
+  const basemapBtns = document.querySelectorAll('.basemap-btn');
+  basemapBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      basemapBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (mtrMap && typeof mtrMap.setBasemap === 'function') {
+        mtrMap.setBasemap(btn.dataset.basemap);
+      }
+    });
+  });
+
   // Inspector Tabs
   tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {

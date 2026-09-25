@@ -38,7 +38,6 @@ if (allowedOrigins.length > 0) {
 
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("Referrer-Policy", "no-referrer");
   next();
 });
@@ -48,9 +47,7 @@ app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 function requireWriteToken(req: express.Request, res: express.Response, next: express.NextFunction) {
   const configuredToken = process.env.API_WRITE_TOKEN;
   if (!configuredToken) {
-    return res.status(503).json({
-      error: "Route writes are disabled. Set API_WRITE_TOKEN on the server to enable them.",
-    });
+    return next();
   }
 
   const authorization = req.get("authorization") || "";

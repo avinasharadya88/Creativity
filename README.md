@@ -88,30 +88,35 @@ That's 152 hours reduced to 5 minutes. The app delivers a ~95% reduction in effo
 git clone https://github.com/avinasharadya88/Creativity.git
 cd Creativity
 
-# Start the web server on port 8080 (zero external package installation required!)
-python3 run.py --server 8080
+# Install, verify, build, and start the Node server
+npm install
+npm test
+npm run build
+API_WRITE_TOKEN='replace-with-a-long-random-secret' npm start
 ```
-Then open `http://localhost:8080` in your web browser.
+Then open `http://127.0.0.1:3000` in your browser. Viewing and exporting are read-only. Creating or editing a route prompts for the `API_WRITE_TOKEN`, which is retained only for the browser tab session.
+
+The server binds to `127.0.0.1` by default. Set `HOST=0.0.0.0` only when network exposure is intentional and protected by an authenticated reverse proxy. Cross-origin browser access is disabled unless exact origins are listed in the comma-separated `CORS_ORIGINS` environment variable.
 
 ### Hosting from your Laptop & Sharing a Live Public Feedback Link
 
-To share your local running app (`http://localhost:8080`) with colleagues or reviewers anywhere in the world:
+To share the local app, keep the write token private and prefer a tunnel or proxy with its own access control:
 
 - **Option A: Cloudflare Tunnel (Direct instant URL)**
   ```bash
   brew install cloudflare/cloudflare/cloudflared
-  cloudflared tunnel --url http://localhost:8080
+  cloudflared tunnel --url http://127.0.0.1:3000
   ```
   *(Outputs a direct `https://....trycloudflare.com` link with zero prompt screens).*
 
 - **Option B: Pinggy SSH Tunnel (No software installation required)**
   ```bash
-  ssh -p 443 -R 80:localhost:8080 a.pinggy.io
+  ssh -p 443 -R 80:127.0.0.1:3000 a.pinggy.io
   ```
 
 - **Option C: LocalTunnel**
   ```bash
-  npx localtunnel --port 8080
+  npx localtunnel --port 3000
   ```
 
 ---

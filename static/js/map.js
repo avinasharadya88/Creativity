@@ -117,7 +117,7 @@ class MTRMap {
 
       polygon.bindTooltip(`
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.5;">
-          <b style="color: ${primaryColor}; font-size: 12px;">${routeDetails.route_id} Corridor</b><br>
+          <b style="color: ${primaryColor}; font-size: 12px;">${this.escapeHtml(routeDetails.route_id)} Corridor</b><br>
           <span style="color: #94a3b8;">Width:</span> <b style="color: #fff;">${routeDetails.route_width_nm || 10.0} NM</b><br>
           <span style="color: #94a3b8;">Envelope:</span> <b style="color: #fff;">${(routeDetails.floor_alt_ft || 0).toLocaleString()} - ${(routeDetails.ceiling_alt_ft || 0).toLocaleString()} ft MSL</b>
         </div>
@@ -149,8 +149,8 @@ class MTRMap {
 
       centerline.bindTooltip(`
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.5;">
-          <b style="color: ${primaryColor}; font-size: 12px;">${routeDetails.route_id} Flight Path</b><br>
-          <span style="color: #94a3b8;">Unit:</span> ${routeDetails.originating_agency || ''}<br>
+          <b style="color: ${primaryColor}; font-size: 12px;">${this.escapeHtml(routeDetails.route_id)} Flight Path</b><br>
+          <span style="color: #94a3b8;">Unit:</span> ${this.escapeHtml(routeDetails.originating_agency || '')}<br>
           <span style="color: #94a3b8;">Total Dist:</span> <b style="color: #fff;">${routeDetails.total_distance_nm || ''} NM</b>
         </div>
       `, { sticky: true });
@@ -198,7 +198,7 @@ class MTRMap {
           text-align: center;
           letter-spacing: 0.3px;
         ">
-          ${ptName}
+          ${this.escapeHtml(ptName)}
         </div>
       `;
 
@@ -214,15 +214,15 @@ class MTRMap {
       const popupHtml = `
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.6; min-width: 200px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; border-bottom: 1px solid rgba(56, 189, 248, 0.2); padding-bottom: 4px;">
-            <b style="font-size: 13px; color: ${primaryColor};">${ptName}</b>
-            <span style="font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(56,189,248,0.2); color: #38bdf8;">${ptType}</span>
+            <b style="font-size: 13px; color: ${primaryColor};">${this.escapeHtml(ptName)}</b>
+            <span style="font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(56,189,248,0.2); color: #38bdf8;">${this.escapeHtml(ptType)}</span>
           </div>
-          <div><span style="color:#94a3b8;">Route:</span> <b>${routeDetails.route_id}</b> [Leg #${seg.sequence_num}]</div>
-          <div><span style="color:#94a3b8;">Position:</span> ${seg.human_lat}, ${seg.human_lon}</div>
-          <div><span style="color:#94a3b8;">ARINC Form:</span> <code style="color:#a5f3fc;">${seg.arinc_lat || ''}, ${seg.arinc_lon || ''}</code></div>
+          <div><span style="color:#94a3b8;">Route:</span> <b>${this.escapeHtml(routeDetails.route_id)}</b> [Leg #${this.escapeHtml(seg.sequence_num)}]</div>
+          <div><span style="color:#94a3b8;">Position:</span> ${this.escapeHtml(seg.human_lat)}, ${this.escapeHtml(seg.human_lon)}</div>
+          <div><span style="color:#94a3b8;">ARINC Form:</span> <code style="color:#a5f3fc;">${this.escapeHtml(seg.arinc_lat || '')}, ${this.escapeHtml(seg.arinc_lon || '')}</code></div>
           <div><span style="color:#94a3b8;">Altitude:</span> ${(seg.min_alt_ft || routeDetails.floor_alt_ft || 0).toLocaleString()} - ${(seg.max_alt_ft || routeDetails.ceiling_alt_ft || 0).toLocaleString()} ft</div>
           <div><span style="color:#94a3b8;">Corridor:</span> ${seg.width_left_nm || 5.0} NM L / ${seg.width_right_nm || 5.0} NM R</div>
-          ${seg.next_point_name ? `<div><span style="color:#94a3b8;">Next Leg:</span> <b>${seg.next_point_name}</b> (${seg.segment_distance_nm || '-'} NM)</div>` : ''}
+          ${seg.next_point_name ? `<div><span style="color:#94a3b8;">Next Leg:</span> <b>${this.escapeHtml(seg.next_point_name)}</b> (${this.escapeHtml(seg.segment_distance_nm || '-')} NM)</div>` : ''}
         </div>
       `;
 
@@ -235,6 +235,15 @@ class MTRMap {
       this.currentBounds = L.latLngBounds(latLngs);
       this.map.fitBounds(this.currentBounds, { padding: [40, 40], maxZoom: 12 });
     }
+  }
+
+  escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   fitCurrentBounds() {

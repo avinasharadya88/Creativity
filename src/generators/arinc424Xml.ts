@@ -219,14 +219,14 @@ export function validateArinc424Xml(xmlContent: string): { valid: boolean; versi
     if (!xmlContent.includes(`version="${ARINC_VERSION}"`)) {
       return { valid: false, error: `Expected version ${ARINC_VERSION}` };
     }
-    const routeRegex = /<MilitaryTrainingRoute\s+id="([^"]+)"\s+status="([^"]+)"/g;
+    const routeRegex = /<MilitaryTrainingRoute\s+id="([^"]+)"\s+status="([^"]+)"[^>]*>([\s\S]*?)<\/MilitaryTrainingRoute>/g;
     const routes: { route_id: string; status: string; segment_count: number }[] = [];
     let match;
     while ((match = routeRegex.exec(xmlContent)) !== null) {
       routes.push({
         route_id: match[1],
         status: match[2],
-        segment_count: (xmlContent.match(/<Segment\s+sequence=/g) || []).length,
+        segment_count: (match[3].match(/<Segment\s+sequence=/g) || []).length,
       });
     }
 

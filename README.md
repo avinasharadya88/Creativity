@@ -98,6 +98,8 @@ Then open `http://127.0.0.1:3000` in your browser. Viewing and exporting are rea
 
 The server binds to `127.0.0.1` by default. Set `HOST=0.0.0.0` only when network exposure is intentional and protected by an authenticated reverse proxy. Cross-origin browser access is disabled unless exact origins are listed in the comma-separated `CORS_ORIGINS` environment variable.
 
+On Google AI Studio / Cloud Run, remove any `HOST=127.0.0.1` setting. The service detects Cloud Run through `K_SERVICE` and always listens on `0.0.0.0:$PORT` there. The `gcp-build` script builds `dist/server.js` before Cloud Run starts the service.
+
 ### Hosting from your Laptop & Sharing a Live Public Feedback Link
 
 To share the local app, keep the write token private and prefer a tunnel or proxy with its own access control:

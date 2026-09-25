@@ -13,6 +13,7 @@ Reviewed 2026-09-25 against commit `9788a75` (`main`). Severity reflects impact 
 | Medium | XML validation assigned the document-wide segment count to every route. | Counts are now calculated within each matched route element and covered by a regression test. |
 | Medium | Request bodies were accepted up to 10 MB without a demonstrated need. | Reduced JSON and form limits to 1 MB. |
 | Low | The production build mixed `import.meta` with CommonJS output and emitted compatibility warnings. | Standardized the bundle and start command on ESM. |
+| High | A local-only `HOST=127.0.0.1` value propagated into Google AI Studio, preventing Cloud Run's startup probe from reaching port 3000. | Cloud Run is now detected through `K_SERVICE`, `HOST` is omitted from the example environment, and `gcp-build` produces the startup bundle. |
 | Low | Responses lacked basic anti-sniffing/framing/referrer protections. | Added `nosniff`, `DENY` framing, and `no-referrer` headers. |
 
 ## Deferred / follow-up work

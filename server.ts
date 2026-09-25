@@ -18,7 +18,7 @@ const appDir = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.disable("x-powered-by");
 const PORT = Number(process.env.PORT || 3000);
-const HOST = process.env.HOST || "0.0.0.0";
+const HOST = process.env.K_SERVICE ? "0.0.0.0" : (process.env.HOST || "127.0.0.1");
 const service = new MTRService();
 
 // Middlewares
@@ -28,9 +28,10 @@ const allowedOrigins = (process.env.CORS_ORIGINS || "")
   .filter(Boolean);
 
 if (allowedOrigins.length > 0) {
+  const allowAnyOrigin = allowedOrigins.includes("*");
   app.use(cors({
     origin(origin, callback) {
-      callback(null, !origin || allowedOrigins.includes(origin));
+      callback(null, !origin || allowAnyOrigin || allowedOrigins.includes(origin));
     },
   }));
 }

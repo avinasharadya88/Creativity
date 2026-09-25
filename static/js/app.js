@@ -3,6 +3,41 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Utility: In-app toast notifications (replaces window.alert)
+  function showToast(message, type = 'info') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toastContainer';
+      container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:999999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    const bg = type === 'error' ? '#ef4444' : (type === 'success' ? '#10b981' : '#0284c7');
+    toast.style.cssText = `background:${bg};color:#fff;padding:10px 18px;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.6);pointer-events:auto;transition:opacity 0.25s ease, transform 0.25s ease;transform:translateY(10px);opacity:0;`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.style.transform = 'translateY(0)';
+      toast.style.opacity = '1';
+    });
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      setTimeout(() => toast.remove(), 250);
+    }, 4000);
+  }
+
+  // Utility: Safe file download (replaces window.open)
+  function downloadUrl(url, filename) {
+    const a = document.createElement('a');
+    a.href = url;
+    if (filename) a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
   // Initialize Map and Profile Chart
   const mtrMap = new MTRMap('mapContainer');
   const profileChart = new MTRProfileChart('profileCanvas');
@@ -208,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
       xmlValidationBadge.textContent = '✓ ARINC 424-23 Valid';
       xmlValidationBadge.className = 'xml-status-badge valid';
       btnDownloadXml.onclick = () => {
-        window.open(`/api/routes/${encodeURIComponent(routeId)}/arinc424-xml?download=true`, '_blank');
+        downloadUrl(`/api/routes/${encodeURIComponent(routeId)}/arinc424-xml?download=true`, `ARINC424-23-${routeId}.xml`);
       };
     } catch (err) {
       xmlCodeContent.textContent = 'Failed to load XML';
@@ -244,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       btnDownloadFixed.onclick = () => {
-        window.open(`/api/routes/${encodeURIComponent(routeId)}/arinc424-fixed?download=true`, '_blank');
+        downloadUrl(`/api/routes/${encodeURIComponent(routeId)}/arinc424-fixed?download=true`, `ARINC424-${routeId}.dat`);
       };
     } catch (err) {
       fixedCodeContent.textContent = 'Failed to load fixed records';
@@ -381,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function openEditModal(route) {
     if (!route) {
-      alert('Please select a route first to edit.');
+      showToast('Please select a route first to edit.', 'error');
       return;
     }
 
@@ -527,14 +562,14 @@ document.addEventListener('DOMContentLoaded', () => {
           routePayload = parsed;
         }
       } catch (err) {
-        alert('Invalid JSON: ' + err.message);
+        showToast('Invalid JSON: ' + err.message, 'error');
         return;
       }
     } else {
       // Manual form
       const rId = document.getElementById('fRouteId').value.trim();
       if (!rId) {
-        alert('Route ID is required');
+        showToast('Route ID is required', 'error');
         return;
       }
 
@@ -568,31 +603,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      let writeToken = sessionStorage.getItem('mtrWriteToken');
-      if (!writeToken) {
-        writeToken = window.prompt('Enter the server API write token to save this route:');
-        if (!writeToken) return;
-        sessionStorage.setItem('mtrWriteToken', writeToken);
+      const headers = { 'Content-Type': 'application/json' };
+      const writeToken = sessionStorage.getItem('mtrWriteToken');
+      if (writeToken) {
+        headers['Authorization'] = `Bearer ${writeToken}`;
       }
       const res = await fetch('/api/routes', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${writeToken}`
-        },
+        headers,
         body: JSON.stringify(routePayload)
       });
       const data = await res.json();
       if (!res.ok) {
-        if (res.status === 401) sessionStorage.removeItem('mtrWriteToken');
+        if (res.status === 401) {
+          sessionStorage.removeItem('mtrWriteToken');
+        }
         throw new Error(data.error || 'Failed to save');
       }
 
       closeModal();
       await loadRoutes();
       selectRoute(routePayload.route_id);
+      showToast(`Route ${routePayload.route_id} saved successfully!`, 'success');
     } catch (err) {
-      alert('Error saving route: ' + err.message);
+      showToast('Error saving route: ' + err.message, 'error');
     }
   });
 

@@ -128,8 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       card.innerHTML = `
         <div class="route-card-header">
-          <span class="route-card-id">${r.route_id}</span>
-          <span class="badge ${badgeClass}">${r.route_type}</span>
+          <span class="route-card-id">${escapeHtml(r.route_id)}</span>
+          <span class="badge ${badgeClass}">${escapeHtml(r.route_type)}</span>
         </div>
         <div class="route-card-name" title="${escapeHtml(r.route_name || 'Military Training Route')}">${escapeHtml(r.route_name || 'Military Training Route')}</div>
         <div class="route-card-meta">
@@ -262,9 +262,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const tr = document.createElement('tr');
       const terminator = s.sequence_num === 1 ? 'IF' : 'TF';
       tr.innerHTML = `
-        <td><b>${s.sequence_num}</b></td>
-        <td><b>${s.point_name}</b> ${s.next_point_name ? `→ ${s.next_point_name}` : ''}</td>
-        <td>${s.point_type}</td>
+        <td><b>${escapeHtml(String(s.sequence_num))}</b></td>
+        <td><b>${escapeHtml(s.point_name)}</b> ${s.next_point_name ? `→ ${escapeHtml(s.next_point_name)}` : ''}</td>
+        <td>${escapeHtml(s.point_type)}</td>
         <td><span class="badge" style="background:#1e293b; color:#38bdf8;">${terminator}</span></td>
         <td>${(s.min_alt_ft || 0).toLocaleString()} - ${(s.max_alt_ft || 0).toLocaleString()} ft</td>
         <td>${s.width_left_nm || 5.0}L / ${s.width_right_nm || 5.0}R NM</td>
@@ -275,10 +275,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function escapeHtml(str) {
-    return str
+    return String(str ?? '')
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   // -------------------------------------------------------------
@@ -460,16 +462,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const row = document.createElement('div');
     row.className = 'waypoint-row';
     row.innerHTML = `
-      <input type="number" class="wp-seq" value="${seq}" style="width: 100%;" />
-      <input type="text" class="wp-name" value="${name}" placeholder="Name" />
+      <input type="number" class="wp-seq" value="${escapeHtml(seq)}" style="width: 100%;" />
+      <input type="text" class="wp-name" value="${escapeHtml(name)}" placeholder="Name" />
       <select class="wp-type">
         <option value="ENTRY" ${type === 'ENTRY' ? 'selected' : ''}>ENTRY</option>
         <option value="WAYPOINT" ${type === 'WAYPOINT' ? 'selected' : ''}>WAYPOINT</option>
         <option value="TURN_POINT" ${type === 'TURN_POINT' ? 'selected' : ''}>TURN</option>
         <option value="EXIT" ${type === 'EXIT' ? 'selected' : ''}>EXIT</option>
       </select>
-      <input type="number" step="0.0001" class="wp-lat" value="${lat}" placeholder="Latitude" />
-      <input type="number" step="0.0001" class="wp-lon" value="${lon}" placeholder="Longitude" />
+      <input type="number" step="0.0001" class="wp-lat" value="${escapeHtml(lat)}" placeholder="Latitude" />
+      <input type="number" step="0.0001" class="wp-lon" value="${escapeHtml(lon)}" placeholder="Longitude" />
       <button type="button" class="btn-remove-row" title="Remove">✕</button>
     `;
 
@@ -566,13 +568,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
+      let writeToken = sessionStorage.getItem('mtrWriteToken');
+      if (!writeToken) {
+        writeToken = window.prompt('Enter the server API write token to save this route:');
+        if (!writeToken) return;
+        sessionStorage.setItem('mtrWriteToken', writeToken);
+      }
       const res = await fetch('/api/routes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${writeToken}`
+        },
         body: JSON.stringify(routePayload)
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to save');
+      if (!res.ok) {
+        if (res.status === 401) sessionStorage.removeItem('mtrWriteToken');
+        throw new Error(data.error || 'Failed to save');
+      }
 
       closeModal();
       await loadRoutes();

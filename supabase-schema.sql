@@ -47,6 +47,7 @@ ALTER TABLE public.mtr_segments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read mtr_routes" ON public.mtr_routes FOR SELECT USING (true);
 CREATE POLICY "Allow public read mtr_segments" ON public.mtr_segments FOR SELECT USING (true);
 
--- Allow public write access (INSERT/UPDATE/DELETE) for demo app
-CREATE POLICY "Allow public write mtr_routes" ON public.mtr_routes FOR ALL USING (true);
-CREATE POLICY "Allow public write mtr_segments" ON public.mtr_segments FOR ALL USING (true);
+-- Writes must go through a trusted backend. Remove the legacy anonymous-write
+-- policies as well, so rerunning this migration repairs existing deployments.
+DROP POLICY IF EXISTS "Allow public write mtr_routes" ON public.mtr_routes;
+DROP POLICY IF EXISTS "Allow public write mtr_segments" ON public.mtr_segments;

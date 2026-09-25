@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import crypto from "crypto";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
@@ -12,18 +13,57 @@ import {
 import { generateMtrFixedRecords } from "./src/generators/arinc424Fixed.js";
 import { generateCorridorPolygon } from "./src/generators/corridorCalc.js";
 
-const appDir = typeof __dirname !== "undefined"
-  ? __dirname
-  : (typeof import.meta?.url === "string" ? path.dirname(fileURLToPath(import.meta.url)) : process.cwd());
+const appDir = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
-const PORT = 3000;
+app.disable("x-powered-by");
+const PORT = Number(process.env.PORT || 3000);
+const HOST = process.env.HOST || "127.0.0.1";
 const service = new MTRService();
 
 // Middlewares
-app.use(cors());
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+const allowedOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+if (allowedOrigins.length > 0) {
+  app.use(cors({
+    origin(origin, callback) {
+      callback(null, !origin || allowedOrigins.includes(origin));
+    },
+  }));
+}
+
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  next();
+});
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+
+function requireWriteToken(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const configuredToken = process.env.API_WRITE_TOKEN;
+  if (!configuredToken) {
+    return res.status(503).json({
+      error: "Route writes are disabled. Set API_WRITE_TOKEN on the server to enable them.",
+    });
+  }
+
+  const authorization = req.get("authorization") || "";
+  const suppliedToken = authorization.startsWith("Bearer ")
+    ? authorization.slice("Bearer ".length)
+    : req.get("x-api-key") || "";
+  const expected = Buffer.from(configuredToken);
+  const supplied = Buffer.from(suppliedToken);
+
+  if (expected.length !== supplied.length || !crypto.timingSafeEqual(expected, supplied)) {
+    return res.status(401).json({ error: "A valid write token is required." });
+  }
+  next();
+}
 
 // 1. Health check
 app.get("/api/health", (_req, res) => {
@@ -162,7 +202,7 @@ app.get("/api/routes/:routeId/plain-english", (req, res) => {
 });
 
 // 7. Create or update route
-app.post("/api/routes", (req, res) => {
+app.post("/api/routes", requireWriteToken, (req, res) => {
   try {
     const payload = req.body;
     if (!payload || !payload.route_id) {
@@ -212,6 +252,6 @@ app.get("*all", (_req, res) => {
 });
 
 // Start listening
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✈ eNASR to ARINC 424-23 MTR Explorer listening on http://0.0.0.0:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`✈ eNASR to ARINC 424-23 MTR Explorer listening on http://${HOST}:${PORT}`);
 });

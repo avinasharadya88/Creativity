@@ -207,6 +207,77 @@ export class MTRService {
     return fullRoute;
   }
 
+  private validateRoute(routeData: any): void {
+    if (!routeData || typeof routeData !== "object" || Array.isArray(routeData)) {
+      throw new Error("Route payload must be a JSON object");
+    }
+
+    const routeId = String(routeData.route_id || "").trim().toUpperCase();
+    if (!/^[A-Z0-9][A-Z0-9_-]{0,31}$/.test(routeId)) {
+      throw new Error("route_id must be 1-32 characters using only letters, numbers, '_' or '-'");
+    }
+
+    const routeType = String(routeData.route_type || "").toUpperCase();
+    if (!new Set(["IR", "VR", "SR"]).has(routeType)) {
+      throw new Error("route_type must be IR, VR, or SR");
+    }
+
+    const requiredText = ["route_name", "originating_agency", "artcc_facility"];
+    for (const field of requiredText) {
+      if (typeof routeData[field] !== "string" || routeData[field].trim().length === 0 || routeData[field].length > 200) {
+        throw new Error(`${field} must be a non-empty string of at most 200 characters`);
+      }
+    }
+
+    const finiteInRange = (value: unknown, min: number, max: number) =>
+      typeof value === "number" && Number.isFinite(value) && value >= min && value <= max;
+    if (!finiteInRange(routeData.floor_alt_ft, 0, 99999) || !finiteInRange(routeData.ceiling_alt_ft, 0, 99999)) {
+      throw new Error("Route altitudes must be finite numbers between 0 and 99,999 feet");
+    }
+    if (routeData.floor_alt_ft > routeData.ceiling_alt_ft) {
+      throw new Error("floor_alt_ft cannot exceed ceiling_alt_ft");
+    }
+    if (!finiteInRange(routeData.route_width_nm, 0.1, 99.9)) {
+      throw new Error("route_width_nm must be between 0.1 and 99.9 NM");
+    }
+    if (!Array.isArray(routeData.segments) || routeData.segments.length < 2 || routeData.segments.length > 1000) {
+      throw new Error("segments must contain between 2 and 1,000 waypoints");
+    }
+
+    const sequences = new Set<number>();
+    routeData.segments.forEach((segment: any, index: number) => {
+      if (!segment || typeof segment !== "object" || Array.isArray(segment)) {
+        throw new Error(`segments[${index}] must be an object`);
+      }
+      if (!Number.isInteger(segment.sequence_num) || segment.sequence_num < 1 || sequences.has(segment.sequence_num)) {
+        throw new Error(`segments[${index}].sequence_num must be a unique positive integer`);
+      }
+      sequences.add(segment.sequence_num);
+      if (typeof segment.point_name !== "string" || !/^[A-Za-z0-9_.-]{1,40}$/.test(segment.point_name)) {
+        throw new Error(`segments[${index}].point_name contains unsupported characters`);
+      }
+      if (!new Set(["ENTRY", "WAYPOINT", "TURN_POINT", "EXIT"]).has(String(segment.point_type).toUpperCase())) {
+        throw new Error(`segments[${index}].point_type is invalid`);
+      }
+      if (!finiteInRange(segment.latitude_dec, -90, 90) || !finiteInRange(segment.longitude_dec, -180, 180)) {
+        throw new Error(`segments[${index}] coordinates are outside WGS84 bounds`);
+      }
+      for (const widthField of ["width_left_nm", "width_right_nm"] as const) {
+        if (segment[widthField] != null && !finiteInRange(segment[widthField], 0, 99.9)) {
+          throw new Error(`segments[${index}].${widthField} must be between 0 and 99.9 NM`);
+        }
+      }
+      for (const altitudeField of ["min_alt_ft", "max_alt_ft"] as const) {
+        if (segment[altitudeField] != null && !finiteInRange(segment[altitudeField], 0, 99999)) {
+          throw new Error(`segments[${index}].${altitudeField} must be between 0 and 99,999 feet`);
+        }
+      }
+      if (segment.min_alt_ft != null && segment.max_alt_ft != null && segment.min_alt_ft > segment.max_alt_ft) {
+        throw new Error(`segments[${index}] minimum altitude cannot exceed maximum altitude`);
+      }
+    });
+  }
+
   public listRoutes(routeType?: string): MTRRouteSummary[] {
     const list: MTRRouteSummary[] = [];
     const filterType = routeType ? routeType.trim().toUpperCase() : null;
@@ -371,10 +442,7 @@ export class MTRService {
   }
 
   public createOrUpdateRoute(routeData: any): MTRRoute {
-    const routeId = String(routeData.route_id || "").trim().toUpperCase();
-    if (!routeId) {
-      throw new Error("route_id is required");
-    }
+    this.validateRoute(routeData);
     return this.enrichAndSaveRoute(routeData);
   }
 }

@@ -14,3 +14,7 @@ Thumbs.db
 # Logs and databases
 *.log
 scratch/
+
+# Node build and dependency output
+node_modules/
+dist/

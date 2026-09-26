@@ -1,26 +1,22 @@
 {
-  "name": "enasr-arinc424-mtr-explorer",
+  "name": "creativity",
   "version": "1.0.0",
-  "description": "Military Training Route Translation, Corridor Modeling & Aeronautical Visualization",
   "type": "module",
+  "main": "server.ts",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "esbuild server.ts --bundle --platform=node --format=esm --packages=external --sourcemap --outfile=dist/server.js",
-    "gcp-build": "npm run build",
-    "lint": "tsc --noEmit",
-    "test": "tsx --test test/**/*.test.ts",
-    "start": "node dist/server.js"
+    "build": "tsc",
+    "start": "tsx server.ts"
   },
   "dependencies": {
-    "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/node": "^26.6.2",
-    "esbuild": "^0.28.2",
-    "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
   }
 }

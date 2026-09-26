@@ -18,7 +18,7 @@ const appDir = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.disable("x-powered-by");
 const PORT = Number(process.env.PORT || 3000);
-const HOST = process.env.K_SERVICE ? "0.0.0.0" : (process.env.HOST || "127.0.0.1");
+const HOST = process.env.HOST || "0.0.0.0";
 const service = new MTRService();
 
 // Middlewares
@@ -65,7 +65,7 @@ function requireWriteToken(req: express.Request, res: express.Response, next: ex
 
 // 1. Health check
 app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", app: "eNASR to ARINC 424-23 MTR Explorer" });
+  res.status(200).json({ status: "ok", app: "eNASR to ARINC 424-23 MTR Explorer" });
 });
 
 // 2. List all routes (supports optional ?type=IR/VR/SR)
@@ -243,10 +243,16 @@ const staticDir = fs.existsSync(path.join(appDir, "static"))
     ? path.join(process.cwd(), "static")
     : path.join(appDir, "mtr_app", "static"));
 
-app.use(express.static(staticDir));
+if (fs.existsSync(staticDir)) {
+  app.use(express.static(staticDir));
+}
 
-app.get("*all", (_req, res) => {
-  res.sendFile(path.join(staticDir, "index.html"));
+app.get("*", (_req, res) => {
+  const indexPath = path.join(staticDir, "index.html");
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+  res.status(200).send("eNASR to ARINC 424-23 MTR Explorer API running");
 });
 
 // Start listening

@@ -18,3 +18,4 @@ scratch/
 # Node build and dependency output
 node_modules/
 dist/
+*.mov

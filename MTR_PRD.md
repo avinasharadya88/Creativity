@@ -44,7 +44,7 @@ At narrower desktop sizes, secondary map labels may be hidden to preserve the wo
 ## Security and operational requirements
 
 - The service honors `PORT` and defaults to `0.0.0.0`, as required by Cloud Run.
-- Local development can be restricted to loopback with `HOST=127.0.0.1`.
+- Local development can be restricted to loopback with `BIND_HOST=127.0.0.1`; generic platform `HOST` metadata must not control the listener.
 - Network deployments disable writes until `API_WRITE_TOKEN` is configured.
 - The server accepts no more than 30 write requests per client address per minute.
 - Request bodies are limited to one megabyte.

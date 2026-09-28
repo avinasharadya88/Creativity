@@ -7,6 +7,7 @@ import { generateArinc424Xml, validateArinc424Xml } from "../src/generators/arin
 import { generateMtrFixedRecords, RECORD_LENGTH } from "../src/generators/arinc424Fixed.js";
 import { generateCorridorPolygon, validateCorridorPolygon } from "../src/generators/corridorCalc.js";
 import { MTRService } from "../src/services/mtrService.js";
+import { resolveServerConfig } from "../src/serverConfig.js";
 import type { MTRRoute } from "../src/types.js";
 
 function route(routeId: string, segmentCount: number): MTRRoute {
@@ -107,4 +108,12 @@ test("the crawler policy is present and permits the public application", () => {
   const robots = fs.readFileSync(path.join(process.cwd(), "static", "robots.txt"), "utf8");
   assert.match(robots, /^User-agent: \*$/m);
   assert.match(robots, /^Allow: \/$/m);
+});
+
+test("Google AI Studio's HOST label cannot override the Cloud Run bind address", () => {
+  assert.deepEqual(resolveServerConfig({ PORT: "3000", HOST: "MTRAPP" }), {
+    port: 3000,
+    bindHost: "0.0.0.0",
+  });
+  assert.equal(resolveServerConfig({ BIND_HOST: "127.0.0.1" }).bindHost, "127.0.0.1");
 });

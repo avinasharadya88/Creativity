@@ -16,7 +16,7 @@ API_WRITE_TOKEN='replace-with-a-long-random-secret' npm start
 
 Open `http://127.0.0.1:3000`. Development mode is available through `npm run dev`.
 
-The server honors `PORT` and defaults to `0.0.0.0`, which is required by Cloud Run and Google AI Studio deployments. Set `HOST=127.0.0.1` for a loopback-only local server. Configure `API_WRITE_TOKEN` for any network deployment; without one, write requests are accepted only from a loopback client.
+The server honors `PORT` and defaults to `0.0.0.0`, which is required by Cloud Run and Google AI Studio deployments. Set `BIND_HOST=127.0.0.1` for a loopback-only local server. The generic `HOST` variable is deliberately ignored because Google AI Studio uses it as an application label rather than a network bind address. Configure `API_WRITE_TOKEN` for any network deployment; without one, write requests are accepted only from a loopback client.
 
 ## Data and persistence
 

@@ -12,20 +12,13 @@ import {
 } from "./src/generators/arinc424Xml.js";
 import { generateMtrFixedRecords } from "./src/generators/arinc424Fixed.js";
 import { generateCorridorPolygon } from "./src/generators/corridorCalc.js";
+import { resolveServerConfig } from "./src/serverConfig.js";
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 app.disable("x-powered-by");
-const configuredPort = process.env.PORT || "3000";
-const PORT = Number(configuredPort);
-if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65_535) {
-  throw new Error(`PORT must be an integer between 1 and 65535; received ${configuredPort}`);
-}
-// Cloud Run must be able to reach the process on every network interface. Do
-// not make this conditional on auxiliary environment variables such as
-// K_SERVICE because managed deployment wrappers may omit them.
-const HOST = process.env.HOST || "0.0.0.0";
+const { port: PORT, bindHost: BIND_HOST } = resolveServerConfig();
 const service = new MTRService();
 
 // Middlewares
@@ -311,6 +304,11 @@ app.get("*", (_req, res) => {
 });
 
 // Start listening
-app.listen(PORT, HOST, () => {
-  console.log(`✈ eNASR to ARINC 424-23 MTR Explorer listening on http://${HOST}:${PORT}`);
+const server = app.listen(PORT, BIND_HOST, () => {
+  console.log(`✈ eNASR to ARINC 424-23 MTR Explorer listening on http://${BIND_HOST}:${PORT}`);
+});
+
+server.on("error", (error) => {
+  console.error(`Failed to listen on ${BIND_HOST}:${PORT}`, error);
+  process.exit(1);
 });

@@ -17,6 +17,7 @@ class MTRMap {
     this.showWaypoints = true;
     this.currentBasemapType = 'sat';
     this.tileLayers = {};
+    this.osmErrorCount = 0;
 
     this.initMap();
   }
@@ -25,8 +26,9 @@ class MTRMap {
     // Default centered on Western US military test ranges
     this.map = L.map(this.containerId, {
       zoomControl: true,
-      attributionControl: false
+      attributionControl: true
     }).setView([35.5, -117.5], 7);
+    this.map.attributionControl.setPrefix(false);
 
     // 1. Satellite Imagery (Esri World Imagery - Clean, high-res aerial, zero watermark/API key)
     this.tileLayers.sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -37,7 +39,21 @@ class MTRMap {
     // 2. OpenStreetMap Standard (Clean, zero watermark/API key)
     this.tileLayers.osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
+      crossOrigin: true,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+    this.tileLayers.osm.on('tileload', () => { this.osmErrorCount = 0; });
+    this.tileLayers.osm.on('tileerror', () => {
+      this.osmErrorCount += 1;
+      if (this.currentBasemapType === 'osm' && this.osmErrorCount >= 3) {
+        this.setBasemap('sat');
+        document.querySelectorAll('.basemap-btn').forEach((button) => {
+          button.classList.toggle('active', button.dataset.basemap === 'sat');
+        });
+        window.dispatchEvent(new CustomEvent('mtr-map-warning', {
+          detail: { message: 'OpenStreetMap tiles are unavailable. Switched to satellite view.' }
+        }));
+      }
     });
 
     // Default to Satellite Basemap
@@ -65,6 +81,7 @@ class MTRMap {
 
     this.tileLayers[type].addTo(this.map);
     this.currentBasemapType = type;
+    if (type === 'osm') this.osmErrorCount = 0;
   }
 
   renderRoute(routeDetails) {

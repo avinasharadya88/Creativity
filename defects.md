@@ -1,37 +1,41 @@
-# Code Review Findings
+# Defect status
 
-Reviewed 2026-09-25 against commit `9788a75` (`main`). Severity reflects impact if the server is exposed using the public-tunnel instructions in the repository.
+Updated 2026-09-28 on branch `codex/fix-map-layout-defects`.
 
-## Addressed immediately
+## Fixes in this change
 
-| Severity | Finding | Resolution |
+| Priority | Defect | Fix and verification |
 | --- | --- | --- |
-| Critical | `POST /api/routes` accepted anonymous writes from any origin while the server listened on every interface. An attacker could replace route data and persist browser-executed markup for the lifetime of the process. | Writes now require `API_WRITE_TOKEN`, CORS is opt-in by allowlist, and the default bind address is localhost. |
-| High | Route and waypoint fields were interpolated into `innerHTML` and Leaflet popup HTML, enabling stored DOM XSS. | Dynamic text is escaped and waypoint identifiers are constrained to an aviation-safe character set. |
-| High | The supplied Supabase schema granted anonymous `INSERT`, `UPDATE`, and `DELETE` access to both route tables. | The migration now drops those public-write policies; writes must pass through a trusted backend. Existing deployments must rerun the policy-removal statements. |
-| High | The conversion and save endpoints accepted missing, non-finite, or out-of-range coordinates, altitudes, widths, and segment structures. Invalid values could silently produce `NaN` geometry and corrupt ARINC/GeoJSON output. | Added bounded server-side validation, unique positive sequence checks, and payload/segment limits. |
-| Medium | XML validation assigned the document-wide segment count to every route. | Counts are now calculated within each matched route element and covered by a regression test. |
-| Medium | Request bodies were accepted up to 10 MB without a demonstrated need. | Reduced JSON and form limits to 1 MB. |
-| Low | The production build mixed `import.meta` with CommonJS output and emitted compatibility warnings. | Standardized the bundle and start command on ESM. |
-| High | A local-only `HOST=127.0.0.1` value propagated into Google AI Studio, preventing Cloud Run's startup probe from reaching port 3000. | Cloud Run is now detected through `K_SERVICE`, `HOST` is omitted from the example environment, and `gcp-build` produces the startup bundle. |
-| Low | Responses lacked basic anti-sniffing/framing/referrer protections. | Added `nosniff`, `DENY` framing, and `no-referrer` headers. |
+| P1 | OpenStreetMap returned repeated 403 policy tiles. | The server had set `Referrer-Policy: no-referrer`, which removed the application identity required by the OSM tile policy. The policy is now `strict-origin-when-cross-origin`, Leaflet attribution is visible, and three tile failures trigger a satellite fallback with an in-app warning. |
+| P1 | The center controls forced the CSS grid wider than the viewport, pushing the inspector and Legs Table outside the page. | Grid tracks now use constrained `minmax` sizing, every panel can shrink with `min-width: 0`, inspector tabs scroll within the panel, and the table uses its own horizontal scroller. Narrow desktop breakpoints hide secondary labels before they can expand the page. |
+| P1 | Route edits existed only in an in-memory `Map` and disappeared on restart. The documentation described a Python, Supabase, and SQLite runtime that was not present. | The Node service now writes `.data/routes.json` atomically and reloads it at startup. `README.md`, `architecture.md`, and `MTR_PRD.md` now describe the code and deployment model in this repository. |
+| P1 | AIRAC cycle `2609` was hard-coded in generators and HTML. | `metadata.json` is the source of the cycle, with an optional `AIRAC_CYCLE` override. The API supplies the page badge and passes the cycle to all exports. Missing, malformed, or mixed cycle metadata stops generation. Regression tests verify XML propagation and fixed-record positions 129 through 132. |
+| P1 | The UI described the ARINC output as compliant even though validation used application-level checks and no authoritative schema was available. | The UI, brief, README, architecture, and product requirements now call the output experimental. Structural checks remain in place and fixed-field regression tests were added. Final certification still requires a licensed ARINC schema or conformance suite supplied by the operator. |
+| P2 | There was no rate limiting, audit trail, write history, or rollback. | Write endpoints are limited to 30 requests per client address per minute. Updates save the previous route under `.data/history/`, audit events go to `.data/audit.jsonl`, and version listing and rollback endpoints are available. Audit identities use a short credential fingerprint and never store the credential. |
+| P2 | Corridor legs were offset independently, which left gaps at turns and allowed invalid polygon output. | The generator now computes capped geodesic miter joins at centerline vertices. It validates closure, finite coordinates, zero-length edges, and non-adjacent edge intersections before a route can be saved or exported. |
+| P2 | The repository had no CI workflow, and `package.json` no longer exposed the test or lint commands named in the documentation. | The scripts were restored, seven Node regression tests run through `npm test`, and `.github/workflows/ci.yml` runs install, type checking, tests, build, data verification, and a production dependency audit. |
+| P3 | Runtime map, font, and Leaflet dependencies were undocumented, and the map hid required provider attribution. | Attribution is visible again. The README explains client IP and availability implications, the providers in use, and the self-hosting or contracted-provider option for stricter deployments. |
+| P3 | Duplicate sample files and the committed SQLite database had no declared source of truth or checksum process. | `initial_routes.json` is now declared canonical. `data-manifest.json` records the role and SHA-256 hash of each reference artifact, and `npm run verify:data` checks them locally and in CI. |
 
-## Deferred / follow-up work
+## Earlier security fixes retained
 
-| Priority | Finding | Recommended action |
+| Severity | Finding | Current state |
 | --- | --- | --- |
-| P1 | The implementation is now TypeScript/Express and stores edits only in an in-memory `Map`, but the README, PRD, and architecture documents describe a missing Python server/CLI/test suite plus Supabase + SQLite persistence. Restarting the current server loses all edits. | Decide which architecture is authoritative. Implement durable storage in the Node service or restore the documented Python components, then rewrite the docs and deployment steps. |
-| P1 | The ARINC output is described as “424-23 compliant,” but validation is string/regex checking rather than validation against an authoritative XSD or conformance suite. Fixed-width field positions also lack specification-backed tests. | Add licensed/authoritative schema and record-layout conformance tests; label current output as experimental until verified. |
-| P1 | AIRAC cycle `2609` is hard-coded in code and UI. It will become stale and may mislabel exports. | Load cycle metadata from the imported dataset/config and reject exports when the cycle is absent or inconsistent. |
-| P2 | There is no rate limiting, audit log, write history, or durable rollback for route changes. | Add authenticated identities/roles, per-route audit records, request throttling, and versioned persistence before multi-user deployment. |
-| P2 | Corridor polygons offset each leg independently and join the offsets directly. Sharp turns can create gaps, overlaps, or self-intersections; there is no geometry-validity check. | Use a geodesic buffer/join algorithm and validate polygon topology before export. |
-| P2 | The repository has no CI workflow and originally had no executable tests despite documentation claiming 13 passing tests. | Add CI for type checking, tests, build, dependency audit, and generated-output fixtures. |
-| P3 | External map tiles, fonts, and Leaflet are runtime CDN dependencies. Only Leaflet has SRI; fonts/tiles reveal client IP and availability is external. | Document the privacy/availability tradeoff or self-host approved assets. |
-| P3 | `enasr-mtr-routes.json` and `.geojson` are duplicate content, and a binary SQLite database is committed without a reproducible provenance/checksum workflow. | Choose canonical source data, generate derivatives in CI, and publish provenance plus checksums. |
+| Critical | Anonymous network writes and permissive cross-origin access. | Network writes require `API_WRITE_TOKEN`; local development stays on loopback by default; CORS uses an explicit allowlist. |
+| High | Stored DOM XSS through route and waypoint fields. | Dynamic text is escaped and waypoint identifiers use a restricted aviation-safe character set. |
+| High | Anonymous Supabase table writes in the reference schema. | Public write policies are removed from `supabase-schema.sql`; Supabase is not used by the running service. |
+| High | Missing bounds checks for coordinates, altitudes, widths, and segment structure. | Server-side validation covers all values and collection limits. |
+| Medium | XML validation reported a document-wide segment count for every route. | Each route body is counted separately and covered by a regression test. |
+| Medium | Request bodies allowed 10 MB. | JSON and form bodies are limited to 1 MB. |
+| Low | The production build mixed ESM and CommonJS behavior. | esbuild emits an ESM bundle and `npm start` runs `dist/server.js`. |
+| Low | Basic response protections were missing or had regressed. | Responses send `nosniff`, `DENY` framing, and a referrer policy that is compatible with OSM identification. |
 
-## Verification performed
+## Verification completed
 
-- TypeScript strict type check (`npm run lint`)
-- Production ESM bundle (`npm run build`)
-- Node regression tests (`npm test`)
-- Production dependency audit (`npm audit --omit=dev`; zero known vulnerabilities at review time)
+- `npm run lint`
+- `npm test` with 7 passing tests
+- `npm run build`
+- `npm run verify:data`
+- `npm audit --omit=dev` with zero known vulnerabilities at the time of this update
+
+The authoritative ARINC certification dependency is intentionally recorded as an external requirement. The application no longer claims that its internal structural checks provide that certification.

@@ -8,7 +8,14 @@ import {
 
 export const ARINC_NAMESPACE = "http://www.sae-itc.com/arinc424/23";
 export const ARINC_VERSION = "424-23";
-export const DEFAULT_CYCLE = "2609";
+
+export function validateAiracCycle(cycle: unknown): string {
+  const normalized = String(cycle ?? "").trim();
+  if (!/^\d{4}$/.test(normalized)) {
+    throw new Error("A four-digit AIRAC cycle is required before generating an export");
+  }
+  return normalized;
+}
 
 export function formatRouteType(routeTypeCode: string): string {
   const mapping: Record<string, string> = {
@@ -39,7 +46,8 @@ function escapeXml(unsafe: string | number | undefined | null): string {
     .replace(/'/g, "&apos;");
 }
 
-export function buildRouteXml(route: MTRRoute, indent: string = "    "): string {
+export function buildRouteXml(route: MTRRoute, indent: string = "    ", cycle?: string): string {
+  const effectiveCycle = validateAiracCycle(cycle ?? route.airac_cycle);
   const routeId = route.route_id || "MTR";
   const status = route.status || "ACTIVE";
   const routeType = route.route_type || "IR";
@@ -62,7 +70,7 @@ export function buildRouteXml(route: MTRRoute, indent: string = "    "): string 
   xml += `${indent}    <RouteType>${escapeXml(formatRouteType(routeType))}</RouteType>\n`;
   xml += `${indent}    <RouteName>${escapeXml(routeName)}</RouteName>\n`;
   xml += `${indent}    <RouteNumber>${escapeXml(routeNum)}</RouteNumber>\n`;
-  xml += `${indent}    <EffectiveCycle>${DEFAULT_CYCLE}</EffectiveCycle>\n`;
+  xml += `${indent}    <EffectiveCycle>${effectiveCycle}</EffectiveCycle>\n`;
   xml += `${indent}  </RouteIdentification>\n`;
 
   // ControllingAgencies
@@ -188,26 +196,31 @@ export function buildRouteXml(route: MTRRoute, indent: string = "    "): string 
   return xml;
 }
 
-export function generateArinc424Xml(routes: MTRRoute[], cycle: string = DEFAULT_CYCLE): string {
+export function generateArinc424Xml(routes: MTRRoute[], cycle?: string): string {
+  const routeCycles = new Set(routes.map((route) => route.airac_cycle).filter(Boolean));
+  if (!cycle && routeCycles.size > 1) {
+    throw new Error("Routes from different AIRAC cycles cannot be exported together");
+  }
+  const effectiveCycle = validateAiracCycle(cycle ?? routeCycles.values().next().value);
   const now = new Date().toISOString();
   let xml = `<?xml version="1.0" encoding="utf-8"?>\n`;
-  xml += `<Arinc424Data version="${ARINC_VERSION}" cycle="${cycle}" generationDate="${now}" xmlns="${ARINC_NAMESPACE}">\n`;
+  xml += `<Arinc424Data version="${ARINC_VERSION}" cycle="${effectiveCycle}" generationDate="${now}" xmlns="${ARINC_NAMESPACE}">\n`;
   xml += `  <FileHeader>\n`;
   xml += `    <Specification>ARINC Specification ${ARINC_VERSION}</Specification>\n`;
   xml += `    <ContentDescription>eNASR Government Aviation Data - Military Training Routes (MTR)</ContentDescription>\n`;
-  xml += `    <AiracCycle>${cycle}</AiracCycle>\n`;
+  xml += `    <AiracCycle>${effectiveCycle}</AiracCycle>\n`;
   xml += `    <RecordCount>${routes.length}</RecordCount>\n`;
   xml += `  </FileHeader>\n`;
   xml += `  <MilitaryTrainingRoutes>\n`;
   for (const r of routes) {
-    xml += buildRouteXml(r, "    ") + "\n";
+    xml += buildRouteXml(r, "    ", effectiveCycle) + "\n";
   }
   xml += `  </MilitaryTrainingRoutes>\n`;
   xml += `</Arinc424Data>\n`;
   return xml;
 }
 
-export function generateSingleRouteXml(route: MTRRoute, cycle: string = DEFAULT_CYCLE): string {
+export function generateSingleRouteXml(route: MTRRoute, cycle?: string): string {
   return generateArinc424Xml([route], cycle);
 }
 
@@ -234,10 +247,12 @@ export function validateArinc424Xml(xmlContent: string): { valid: boolean; versi
       return { valid: false, error: "No MilitaryTrainingRoute elements found in XML" };
     }
 
+    const cycleMatch = xmlContent.match(/<Arinc424Data[^>]*\scycle="([^"]+)"/);
+    const cycle = validateAiracCycle(cycleMatch?.[1]);
     return {
       valid: true,
       version: ARINC_VERSION,
-      cycle: DEFAULT_CYCLE,
+      cycle,
       route_count: routes.length,
       routes,
     };
@@ -298,7 +313,7 @@ export function decodeToPlainEnglish(route: MTRRoute): string {
 
   lines.push(`───────────────────────────────────────────────────────────────────`);
   lines.push(`• Total Route Distance: ${totalDistance.toFixed(1)} NM`);
-  lines.push(`• ARINC 424-23 Spec  : Compliant XML with Supplement 23 Government Schema`);
+  lines.push(`• ARINC 424-23 Output: Experimental mapping; structural checks passed`);
   lines.push(`═══════════════════════════════════════════════════════════════════`);
 
   return lines.join("\n");

@@ -18,7 +18,7 @@ const appDir = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.disable("x-powered-by");
 const PORT = Number(process.env.PORT || 3000);
-const HOST = process.env.HOST || "0.0.0.0";
+const HOST = process.env.K_SERVICE ? "0.0.0.0" : (process.env.HOST || "127.0.0.1");
 const service = new MTRService();
 
 // Middlewares
@@ -38,7 +38,9 @@ if (allowedOrigins.length > 0) {
 
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("X-Frame-Options", "DENY");
+  // OSM requires an identifiable Referer. Send only the app origin, never a path.
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   next();
 });
 app.use(express.json({ limit: "1mb" }));
@@ -47,7 +49,8 @@ app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 function requireWriteToken(req: express.Request, res: express.Response, next: express.NextFunction) {
   const configuredToken = process.env.API_WRITE_TOKEN;
   if (!configuredToken) {
-    return next();
+    if (HOST === "127.0.0.1" || HOST === "localhost" || HOST === "::1") return next();
+    return res.status(503).json({ error: "Writes are disabled until API_WRITE_TOKEN is configured." });
   }
 
   const authorization = req.get("authorization") || "";
@@ -63,9 +66,36 @@ function requireWriteToken(req: express.Request, res: express.Response, next: ex
   next();
 }
 
+const writeAttempts = new Map<string, { count: number; resetAt: number }>();
+function limitWrites(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const now = Date.now();
+  const key = req.ip || req.socket.remoteAddress || "unknown";
+  const current = writeAttempts.get(key);
+  const state = !current || current.resetAt <= now ? { count: 0, resetAt: now + 60_000 } : current;
+  state.count += 1;
+  writeAttempts.set(key, state);
+  res.setHeader("RateLimit-Limit", "30");
+  res.setHeader("RateLimit-Remaining", String(Math.max(0, 30 - state.count)));
+  if (state.count > 30) return res.status(429).json({ error: "Too many write requests. Try again in one minute." });
+  next();
+}
+
+function requestActor(req: express.Request): string {
+  const authorization = req.get("authorization") || req.get("x-api-key") || "local";
+  const fingerprint = crypto.createHash("sha256").update(authorization).digest("hex").slice(0, 12);
+  return `${req.ip || "unknown"}:${fingerprint}`;
+}
+
 // 1. Health check
 app.get("/api/health", (_req, res) => {
   res.status(200).json({ status: "ok", app: "eNASR to ARINC 424-23 MTR Explorer" });
+});
+
+app.get("/api/config", (_req, res) => {
+  res.json({
+    airac_cycle: service.getAiracCycle(),
+    arinc_validation: "structural-experimental",
+  });
 });
 
 // 2. List all routes (supports optional ?type=IR/VR/SR)
@@ -200,14 +230,27 @@ app.get("/api/routes/:routeId/plain-english", (req, res) => {
 });
 
 // 7. Create or update route
-app.post("/api/routes", requireWriteToken, (req, res) => {
+app.post("/api/routes", limitWrites, requireWriteToken, (req, res) => {
   try {
     const payload = req.body;
     if (!payload || !payload.route_id) {
       return res.status(400).json({ error: "route_id is required" });
     }
-    const created = service.createOrUpdateRoute(payload);
+    const created = service.createOrUpdateRoute(payload, requestActor(req));
     res.status(201).json({ status: "success", route: created });
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.get("/api/routes/:routeId/versions", requireWriteToken, (req, res) => {
+  res.json({ route_id: req.params.routeId.toUpperCase(), versions: service.listRouteVersions(req.params.routeId) });
+});
+
+app.post("/api/routes/:routeId/rollback", limitWrites, requireWriteToken, (req, res) => {
+  try {
+    const route = service.rollbackRoute(req.params.routeId, String(req.body?.version || ""), requestActor(req));
+    res.json({ status: "success", route });
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }
@@ -216,9 +259,9 @@ app.post("/api/routes", requireWriteToken, (req, res) => {
 // 8. Convert payload on the fly without storing
 app.post("/api/convert", (req, res) => {
   try {
-    const payload = req.body;
-    const xmlOut = generateSingleRouteXml(payload);
-    const fixedLines = generateMtrFixedRecords(payload);
+    const payload = { ...req.body, airac_cycle: service.getAiracCycle() };
+    const xmlOut = generateSingleRouteXml(payload, service.getAiracCycle());
+    const fixedLines = generateMtrFixedRecords(payload, service.getAiracCycle());
     const validation = validateArinc424Xml(xmlOut);
     const plainText = decodeToPlainEnglish(payload);
     const corridor = generateCorridorPolygon(payload.segments || []);

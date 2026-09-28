@@ -1,6 +1,9 @@
 {
   "name": "eNASR to ARINC 424-23 MTR Explorer",
   "description": "Military Training Route Translation, Corridor Modeling & Aeronautical Visualization",
+  "airac_cycle": "2609",
+  "airac_effective_from": "2026-09-03",
+  "airac_effective_to": "2026-10-01",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

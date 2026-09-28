@@ -34,6 +34,7 @@ export interface MTRRoute {
   ceiling_alt_ft: number;
   route_width_nm: number;
   status?: string;
+  airac_cycle?: string;
   waypoint_count?: number;
   total_distance_nm?: number;
   geometry_wkt?: string | null;

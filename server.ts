@@ -17,8 +17,15 @@ const appDir = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 app.disable("x-powered-by");
-const PORT = Number(process.env.PORT || 3000);
-const HOST = process.env.K_SERVICE ? "0.0.0.0" : (process.env.HOST || "127.0.0.1");
+const configuredPort = process.env.PORT || "3000";
+const PORT = Number(configuredPort);
+if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65_535) {
+  throw new Error(`PORT must be an integer between 1 and 65535; received ${configuredPort}`);
+}
+// Cloud Run must be able to reach the process on every network interface. Do
+// not make this conditional on auxiliary environment variables such as
+// K_SERVICE because managed deployment wrappers may omit them.
+const HOST = process.env.HOST || "0.0.0.0";
 const service = new MTRService();
 
 // Middlewares
@@ -49,7 +56,8 @@ app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 function requireWriteToken(req: express.Request, res: express.Response, next: express.NextFunction) {
   const configuredToken = process.env.API_WRITE_TOKEN;
   if (!configuredToken) {
-    if (HOST === "127.0.0.1" || HOST === "localhost" || HOST === "::1") return next();
+    const remoteAddress = req.ip || req.socket.remoteAddress || "";
+    if (["127.0.0.1", "::1", "::ffff:127.0.0.1"].includes(remoteAddress)) return next();
     return res.status(503).json({ error: "Writes are disabled until API_WRITE_TOKEN is configured." });
   }
 
@@ -280,6 +288,10 @@ app.post("/api/convert", (req, res) => {
 });
 
 // 9. Static Assets & SPA Fallback
+app.get("/robots.txt", (_req, res) => {
+  res.type("text/plain").send("User-agent: *\nAllow: /\n");
+});
+
 const staticDir = fs.existsSync(path.join(appDir, "static"))
   ? path.join(appDir, "static")
   : (fs.existsSync(path.join(process.cwd(), "static"))

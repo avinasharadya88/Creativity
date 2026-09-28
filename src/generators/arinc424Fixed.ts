@@ -1,5 +1,6 @@
 import { MTRRoute } from "../types.js";
 import { toArincDms } from "./corridorCalc.js";
+import { validateAiracCycle } from "./arinc424Xml.js";
 
 export const RECORD_LENGTH = 132;
 
@@ -32,8 +33,9 @@ export function formatAltitude(altFt: any): string {
 
 export function generateMtrFixedRecords(
   route: MTRRoute,
-  cycle: string = "2609"
+  cycle?: string
 ): string[] {
+  const effectiveCycle = validateAiracCycle(cycle ?? route.airac_cycle);
   const records: string[] = [];
   const routeId = route.route_id || "MTR";
   const cleanId = routeId.replace(/-/g, "");
@@ -56,7 +58,7 @@ export function generateMtrFixedRecords(
       pad(formatAltitude(route.floor_alt_ft ?? 100), 5) +
       pad(formatAltitude(route.ceiling_alt_ft ?? 15000), 5) +
       pad("", 63) +
-      pad(cycle, 4);
+      pad(effectiveCycle, 4);
 
     records.push(pad(recordLine, RECORD_LENGTH));
     return records;
@@ -92,7 +94,7 @@ export function generateMtrFixedRecords(
     const remarks = `${seg.point_type || ""} TO ${seg.next_point_name || ""}`.trim();
     const part6 = pad(remarks, 48); // 48 -> 124
     const part7 = pad("", 4); // 4 -> 128
-    const part8 = pad(cycle, 4); // 4 -> 132
+    const part8 = pad(effectiveCycle, 4); // 4 -> 132
 
     let line = part1 + part2 + part3 + part4 + part5 + part6 + part7 + part8;
     if (line.length !== RECORD_LENGTH) {
@@ -106,11 +108,16 @@ export function generateMtrFixedRecords(
 
 export function generateAllFixedRecords(
   routes: MTRRoute[],
-  cycle: string = "2609"
+  cycle?: string
 ): string {
+  const routeCycles = new Set(routes.map((route) => route.airac_cycle).filter(Boolean));
+  if (!cycle && routeCycles.size > 1) {
+    throw new Error("Routes from different AIRAC cycles cannot be exported together");
+  }
+  const effectiveCycle = validateAiracCycle(cycle ?? routeCycles.values().next().value);
   const allLines: string[] = [];
   for (const r of routes) {
-    allLines.push(...generateMtrFixedRecords(r, cycle));
+    allLines.push(...generateMtrFixedRecords(r, effectiveCycle));
   }
   return allLines.join("\n");
 }

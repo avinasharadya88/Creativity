@@ -1,0 +1,16 @@
+{
+  "airac_cycle": "2609",
+  "canonical_route_source": "initial_routes.json",
+  "provenance": "FAA 28-Day NASR subscription data prepared for the repository demo dataset",
+  "files": {
+    "initial_routes.json": "3b6566ae1a1fa94bcdf92b189ca8fd228cb4fb77b0cea995cc7fa55066ab910f",
+    "enasr-mtr-routes.json": "b0d30d0c034096550a6d40b18417295680ee23e257f1a65b2341367a8f9699be",
+    "enasr-mtr-routes.geojson": "b0d30d0c034096550a6d40b18417295680ee23e257f1a65b2341367a8f9699be",
+    "enasr-geospatial.db": "f44412dfb3380ebd920f16e543e80d9e09deba17a323425e8602f4e742daa692"
+  },
+  "notes": {
+    "enasr-mtr-routes.json": "Legacy two-route sample retained for compatibility.",
+    "enasr-mtr-routes.geojson": "Legacy copy of the two-route sample retained for compatibility.",
+    "enasr-geospatial.db": "Legacy reference database. The running Node service does not read it."
+  }
+}

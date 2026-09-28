@@ -18,4 +18,6 @@ scratch/
 # Node build and dependency output
 node_modules/
 dist/
+.data/
+.firecrawl/
 *.mov

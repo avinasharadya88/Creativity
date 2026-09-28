@@ -131,52 +131,35 @@ export function toHumanDms(lat: number, lon: number): [string, string] {
 }
 
 export function generateCorridorPolygon(segments: MTRSegment[]): number[][] {
-  if (!segments || segments.length === 0) return [];
+  if (!segments || segments.length < 2) return [];
 
+  const points = segments.map((segment) => [segment.latitude_dec, segment.longitude_dec] as [number, number]);
   const leftPoints: [number, number][] = [];
   const rightPoints: [number, number][] = [];
 
-  for (let i = 0; i < segments.length; i++) {
-    const seg = segments[i];
-    const lat1 = seg.latitude_dec;
-    const lon1 = seg.longitude_dec;
-    let lat2 = seg.next_lat_dec;
-    let lon2 = seg.next_lon_dec;
+  const normalizeDelta = (degrees: number) => ((degrees + 540) % 360) - 180;
 
-    if (lat2 == null || lon2 == null) {
-      if (i + 1 < segments.length) {
-        lat2 = segments[i + 1].latitude_dec;
-        lon2 = segments[i + 1].longitude_dec;
-      } else {
-        break;
-      }
-    }
+  for (let i = 0; i < points.length; i++) {
+    const [lat, lon] = points[i];
+    const incoming = i > 0
+      ? calculateBearing(points[i - 1][0], points[i - 1][1], lat, lon)
+      : calculateBearing(lat, lon, points[i + 1][0], points[i + 1][1]);
+    const outgoing = i < points.length - 1
+      ? calculateBearing(lat, lon, points[i + 1][0], points[i + 1][1])
+      : incoming;
+    const turn = normalizeDelta(outgoing - incoming);
+    const tangent = (incoming + turn / 2 + 360) % 360;
 
-    const widthLeft = seg.width_left_nm != null ? seg.width_left_nm : 5.0;
-    const widthRight = seg.width_right_nm != null ? seg.width_right_nm : 5.0;
+    // A mitered geodesic join keeps adjacent offsets connected. The cap avoids
+    // extreme spikes at near-reversals, which are rejected by topology checks.
+    const miterScale = Math.min(4, 1 / Math.max(0.25, Math.cos(Math.abs(turn) * Math.PI / 360)));
+    const widthSource = segments[Math.min(i, segments.length - 1)];
+    const widthLeft = (widthSource.width_left_nm ?? 5) * miterScale;
+    const widthRight = (widthSource.width_right_nm ?? 5) * miterScale;
 
-    const course = calculateBearing(lat1, lon1, lat2, lon2);
-    const bearingLeft = (course - 90.0 + 360.0) % 360.0;
-    const bearingRight = (course + 90.0) % 360.0;
-
-    const startLeft = destinationPoint(lat1, lon1, widthLeft, bearingLeft);
-    const startRight = destinationPoint(lat1, lon1, widthRight, bearingRight);
-
-    const endLeft = destinationPoint(lat2, lon2, widthLeft, bearingLeft);
-    const endRight = destinationPoint(lat2, lon2, widthRight, bearingRight);
-
-    leftPoints.push(startLeft);
-    if (i === segments.length - 1 || (i + 1 < segments.length && segments[i + 1].next_lat_dec == null)) {
-      leftPoints.push(endLeft);
-    }
-
-    rightPoints.push(startRight);
-    if (i === segments.length - 1 || (i + 1 < segments.length && segments[i + 1].next_lat_dec == null)) {
-      rightPoints.push(endRight);
-    }
+    leftPoints.push(destinationPoint(lat, lon, widthLeft, (tangent - 90 + 360) % 360));
+    rightPoints.push(destinationPoint(lat, lon, widthRight, (tangent + 90) % 360));
   }
-
-  if (leftPoints.length === 0 || rightPoints.length === 0) return [];
 
   const polygonCoords: number[][] = [];
   for (const [lat, lon] of leftPoints) {
@@ -191,5 +174,48 @@ export function generateCorridorPolygon(segments: MTRSegment[]): number[][] {
     polygonCoords.push(polygonCoords[0]);
   }
 
+  const validation = validateCorridorPolygon(polygonCoords);
+  if (!validation.valid) {
+    throw new Error(`Corridor geometry is invalid: ${validation.error}`);
+  }
+
   return polygonCoords;
+}
+
+export function validateCorridorPolygon(polygon: number[][]): { valid: boolean; error?: string } {
+  if (polygon.length < 4) return { valid: false, error: "polygon has fewer than four coordinates" };
+  if (polygon.some((point) => point.length < 2 || !point.every(Number.isFinite))) {
+    return { valid: false, error: "polygon contains non-finite coordinates" };
+  }
+  const first = polygon[0];
+  const last = polygon[polygon.length - 1];
+  if (first[0] !== last[0] || first[1] !== last[1]) {
+    return { valid: false, error: "polygon ring is not closed" };
+  }
+
+  const orientation = (a: number[], b: number[], c: number[]) =>
+    (b[1] - a[1]) * (c[0] - b[0]) - (b[0] - a[0]) * (c[1] - b[1]);
+  const intersects = (a: number[], b: number[], c: number[], d: number[]) => {
+    const o1 = orientation(a, b, c);
+    const o2 = orientation(a, b, d);
+    const o3 = orientation(c, d, a);
+    const o4 = orientation(c, d, b);
+    return o1 * o2 < 0 && o3 * o4 < 0;
+  };
+
+  const edgeCount = polygon.length - 1;
+  for (let i = 0; i < edgeCount; i++) {
+    const a = polygon[i];
+    const b = polygon[i + 1];
+    if (a[0] === b[0] && a[1] === b[1]) {
+      return { valid: false, error: "polygon contains a zero-length edge" };
+    }
+    for (let j = i + 1; j < edgeCount; j++) {
+      const adjacent = j === i + 1 || (i === 0 && j === edgeCount - 1);
+      if (!adjacent && intersects(a, b, polygon[j], polygon[j + 1])) {
+        return { valid: false, error: `edges ${i + 1} and ${j + 1} intersect` };
+      }
+    }
+  }
+  return { valid: true };
 }

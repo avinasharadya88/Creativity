@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { MTRRoute, MTRRouteSummary, MTRSegment } from "../types.js";
 import {
   calculateBearing,
@@ -21,9 +22,38 @@ import {
 
 export class MTRService {
   private routes: Map<string, MTRRoute> = new Map();
+  private readonly dataFile: string;
+  private readonly auditFile: string;
+  private readonly historyDir: string;
+  private readonly airacCycle: string;
 
-  constructor() {
+  constructor(options: { dataFile?: string; auditFile?: string; historyDir?: string; metadataFile?: string } = {}) {
+    const dataDir = path.join(process.cwd(), ".data");
+    this.dataFile = options.dataFile ?? process.env.ROUTE_DATA_FILE ?? path.join(dataDir, "routes.json");
+    this.auditFile = options.auditFile ?? process.env.AUDIT_LOG_FILE ?? path.join(dataDir, "audit.jsonl");
+    this.historyDir = options.historyDir ?? process.env.ROUTE_HISTORY_DIR ?? path.join(dataDir, "history");
+    this.airacCycle = this.loadAiracCycle(options.metadataFile);
     this.loadInitialData();
+    this.loadPersistedData();
+  }
+
+  private loadAiracCycle(metadataFile?: string): string {
+    const candidates = [
+      process.env.AIRAC_CYCLE ? null : metadataFile,
+      process.env.AIRAC_CYCLE ? null : path.join(process.cwd(), "metadata.json"),
+    ].filter((candidate): candidate is string => Boolean(candidate));
+    let cycle = process.env.AIRAC_CYCLE || "";
+    for (const candidate of candidates) {
+      if (fs.existsSync(candidate)) {
+        const metadata = JSON.parse(fs.readFileSync(candidate, "utf-8"));
+        cycle = metadata.airac_cycle || metadata.airacCycle || "";
+        if (cycle) break;
+      }
+    }
+    if (!/^\d{4}$/.test(cycle)) {
+      throw new Error("AIRAC cycle metadata is missing or invalid; set AIRAC_CYCLE or metadata.airac_cycle");
+    }
+    return cycle;
   }
 
   private loadInitialData() {
@@ -135,6 +165,37 @@ export class MTRService {
     }
   }
 
+  private loadPersistedData(): void {
+    if (!fs.existsSync(this.dataFile)) return;
+    const parsed = JSON.parse(fs.readFileSync(this.dataFile, "utf-8"));
+    if (!Array.isArray(parsed)) {
+      throw new Error(`Persisted route data in ${this.dataFile} must be a JSON array`);
+    }
+    for (const route of parsed) this.enrichAndSaveRoute(route);
+    console.log(`Loaded ${parsed.length} persisted routes from ${this.dataFile}`);
+  }
+
+  private persistRoutes(): void {
+    fs.mkdirSync(path.dirname(this.dataFile), { recursive: true });
+    const temporary = `${this.dataFile}.${process.pid}.tmp`;
+    fs.writeFileSync(temporary, JSON.stringify(Array.from(this.routes.values()), null, 2) + "\n", { mode: 0o600 });
+    fs.renameSync(temporary, this.dataFile);
+  }
+
+  private saveVersion(route: MTRRoute, actor: string): string {
+    const version = `${new Date().toISOString().replace(/[:.]/g, "-")}-${crypto.randomBytes(4).toString("hex")}`;
+    const routeDir = path.join(this.historyDir, route.route_id);
+    fs.mkdirSync(routeDir, { recursive: true });
+    fs.writeFileSync(path.join(routeDir, `${version}.json`), JSON.stringify(route, null, 2) + "\n", { mode: 0o600 });
+    this.appendAudit({ action: "snapshot", route_id: route.route_id, version, actor });
+    return version;
+  }
+
+  private appendAudit(entry: Record<string, unknown>): void {
+    fs.mkdirSync(path.dirname(this.auditFile), { recursive: true });
+    fs.appendFileSync(this.auditFile, JSON.stringify({ timestamp: new Date().toISOString(), ...entry }) + "\n", { mode: 0o600 });
+  }
+
   private enrichAndSaveRoute(rawRoute: any): MTRRoute {
     const routeId = String(rawRoute.route_id || "MTR").trim().toUpperCase();
     const rawSegments = rawRoute.segments || [];
@@ -197,6 +258,7 @@ export class MTRService {
       ceiling_alt_ft: Number(rawRoute.ceiling_alt_ft ?? 15000),
       route_width_nm: Number(rawRoute.route_width_nm ?? 10.0),
       status: rawRoute.status || "ACTIVE",
+      airac_cycle: this.airacCycle,
       segments: enrichedSegments,
       waypoint_count: enrichedSegments.length,
       total_distance_nm: Math.round(cumulativeNm * 10) / 10,
@@ -417,10 +479,10 @@ export class MTRService {
     if (routeId) {
       const route = this.getRouteDetails(routeId);
       if (!route) return `<!-- Route '${routeId}' not found -->`;
-      return generateSingleRouteXml(route);
+      return generateSingleRouteXml(route, this.airacCycle);
     } else {
       const routes = Array.from(this.routes.values());
-      return generateArinc424Xml(routes);
+      return generateArinc424Xml(routes, this.airacCycle);
     }
   }
 
@@ -428,10 +490,10 @@ export class MTRService {
     if (routeId) {
       const route = this.getRouteDetails(routeId);
       if (!route) return `// Route '${routeId}' not found\n`;
-      return generateMtrFixedRecords(route).join("\n");
+      return generateMtrFixedRecords(route, this.airacCycle).join("\n");
     } else {
       const routes = Array.from(this.routes.values());
-      return generateAllFixedRecords(routes);
+      return generateAllFixedRecords(routes, this.airacCycle);
     }
   }
 
@@ -441,8 +503,43 @@ export class MTRService {
     return decodeToPlainEnglish(route);
   }
 
-  public createOrUpdateRoute(routeData: any): MTRRoute {
+  public getAiracCycle(): string {
+    return this.airacCycle;
+  }
+
+  public listRouteVersions(routeId: string): string[] {
+    const routeDir = path.join(this.historyDir, routeId.trim().toUpperCase());
+    if (!fs.existsSync(routeDir)) return [];
+    return fs.readdirSync(routeDir)
+      .filter((name) => name.endsWith(".json"))
+      .map((name) => name.slice(0, -5))
+      .sort()
+      .reverse();
+  }
+
+  public rollbackRoute(routeId: string, version: string, actor: string = "api"): MTRRoute {
+    const normalizedId = routeId.trim().toUpperCase();
+    if (!/^[A-Za-z0-9-]+$/.test(version)) throw new Error("Invalid route version");
+    const versionPath = path.join(this.historyDir, normalizedId, `${version}.json`);
+    if (!fs.existsSync(versionPath)) throw new Error("Route version not found");
+    const current = this.getRouteDetails(normalizedId);
+    if (current) this.saveVersion(current, actor);
+    const restored = JSON.parse(fs.readFileSync(versionPath, "utf-8"));
+    this.validateRoute(restored);
+    const route = this.enrichAndSaveRoute(restored);
+    this.persistRoutes();
+    this.appendAudit({ action: "rollback", route_id: normalizedId, version, actor });
+    return route;
+  }
+
+  public createOrUpdateRoute(routeData: any, actor: string = "api"): MTRRoute {
     this.validateRoute(routeData);
-    return this.enrichAndSaveRoute(routeData);
+    const routeId = String(routeData.route_id).trim().toUpperCase();
+    const previous = this.getRouteDetails(routeId);
+    const previousVersion = previous ? this.saveVersion(previous, actor) : null;
+    const route = this.enrichAndSaveRoute(routeData);
+    this.persistRoutes();
+    this.appendAudit({ action: previous ? "update" : "create", route_id: routeId, previous_version: previousVersion, actor });
+    return route;
   }
 }

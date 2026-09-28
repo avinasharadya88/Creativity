@@ -41,6 +41,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Map and Profile Chart
   const mtrMap = new MTRMap('mapContainer');
   const profileChart = new MTRProfileChart('profileCanvas');
+  const airacCycleBadge = document.getElementById('airacCycleBadge');
+
+  window.addEventListener('mtr-map-warning', (event) => {
+    showToast(event.detail?.message || 'The selected map layer is unavailable.', 'error');
+  });
+
+  async function loadAppConfig() {
+    try {
+      const response = await fetch('/api/config');
+      if (!response.ok) throw new Error('Configuration request failed');
+      const config = await response.json();
+      airacCycleBadge.textContent = `FAA AIRAC ${config.airac_cycle}`;
+    } catch (error) {
+      airacCycleBadge.textContent = 'FAA AIRAC unavailable';
+      console.error('Error loading application configuration:', error);
+    }
+  }
 
   let allRoutes = [];
   let currentFilter = 'ALL';
@@ -238,9 +255,10 @@ document.addEventListener('DOMContentLoaded', () => {
     xmlCodeContent.innerHTML = '<code>Fetching ARINC 424-23 XML...</code>';
     try {
       const res = await fetch(`/api/routes/${encodeURIComponent(routeId)}/arinc424-xml`);
+      if (!res.ok) throw new Error('XML request failed');
       const xmlText = await res.text();
       xmlCodeContent.innerHTML = `<code>${escapeHtml(xmlText)}</code>`;
-      xmlValidationBadge.textContent = '✓ ARINC 424-23 Valid';
+      xmlValidationBadge.textContent = '✓ Structural checks passed (experimental)';
       xmlValidationBadge.className = 'xml-status-badge valid';
       btnDownloadXml.onclick = () => {
         downloadUrl(`/api/routes/${encodeURIComponent(routeId)}/arinc424-xml?download=true`, `ARINC424-23-${routeId}.xml`);
@@ -608,11 +626,24 @@ document.addEventListener('DOMContentLoaded', () => {
       if (writeToken) {
         headers['Authorization'] = `Bearer ${writeToken}`;
       }
-      const res = await fetch('/api/routes', {
+      let res = await fetch('/api/routes', {
         method: 'POST',
         headers,
         body: JSON.stringify(routePayload)
       });
+      if (res.status === 401) {
+        sessionStorage.removeItem('mtrWriteToken');
+        const suppliedToken = window.prompt('Enter the API write token for this deployment:');
+        if (suppliedToken) {
+          sessionStorage.setItem('mtrWriteToken', suppliedToken);
+          headers.Authorization = `Bearer ${suppliedToken}`;
+          res = await fetch('/api/routes', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(routePayload)
+          });
+        }
+      }
       const data = await res.json();
       if (!res.ok) {
         if (res.status === 401) {
@@ -631,5 +662,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Initial Load
+  loadAppConfig();
   loadRoutes();
 });

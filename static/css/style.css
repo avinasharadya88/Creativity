@@ -380,7 +380,7 @@ html, body {
    =================================================================== */
 .dashboard-container {
   display: grid;
-  grid-template-columns: 330px 1fr 430px;
+  grid-template-columns: minmax(270px, 330px) minmax(0, 1fr) minmax(360px, 430px);
   flex: 1;
   height: calc(100vh - 64px);
   overflow: hidden;
@@ -397,6 +397,7 @@ html, body {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   position: relative;
+  min-width: 0;
 }
 
 .panel-right {
@@ -795,6 +796,7 @@ html, body {
   background: #02050e;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 /* Map Controls Header */
@@ -818,6 +820,7 @@ html, body {
   align-items: center;
   gap: 12px;
   overflow: hidden;
+  min-width: 0;
 }
 
 .active-route-indicator {
@@ -842,6 +845,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
 /* Styled Cyber Checkbox Toggles */
@@ -1077,6 +1081,9 @@ html, body {
   align-items: center;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
 }
 
 .tab-btn {
@@ -1091,6 +1098,7 @@ html, body {
   transition: all 0.2s ease;
   outline: none;
   white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .tab-btn:hover {
@@ -1209,13 +1217,54 @@ html, body {
   border-radius: 7px;
   background-color: rgba(3, 7, 18, 0.85);
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .data-table {
-  width: 100%;
+  width: max(100%, 720px);
   border-collapse: collapse;
   font-size: 11.5px;
   text-align: left;
+}
+
+@media (max-width: 1500px) {
+  .dashboard-container {
+    grid-template-columns: minmax(250px, 24vw) minmax(0, 1fr) minmax(350px, 34vw);
+  }
+
+  .map-controls-bar {
+    padding: 0 10px;
+  }
+
+  .map-toggles {
+    gap: 6px;
+  }
+
+  .toggle-control span {
+    max-width: 82px;
+    line-height: 1.1;
+  }
+}
+
+@media (max-width: 1100px) {
+  .app-header {
+    padding: 0 12px;
+  }
+
+  .header-badges {
+    display: none;
+  }
+
+  .dashboard-container {
+    grid-template-columns: minmax(230px, 28vw) minmax(0, 1fr) minmax(330px, 40vw);
+  }
+
+  .map-sub-info,
+  .toggle-control span,
+  #btnEditActiveRoute {
+    display: none;
+  }
 }
 
 .data-table th {

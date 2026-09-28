@@ -8,7 +8,7 @@
     "build": "esbuild server.ts --bundle --platform=node --format=esm --packages=external --sourcemap --outfile=dist/server.js",
     "gcp-build": "npm run build",
     "lint": "tsc --noEmit",
-    "test": "tsx --test test/**/*.test.ts",
+    "test": "tsx --test test/*.test.ts",
     "verify:data": "node scripts/verify-data.mjs",
     "start": "node dist/server.js"
   },

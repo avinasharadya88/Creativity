@@ -102,3 +102,9 @@ test("route edits persist and keep a rollback snapshot", () => {
     fs.rmSync(directory, { recursive: true, force: true });
   }
 });
+
+test("the crawler policy is present and permits the public application", () => {
+  const robots = fs.readFileSync(path.join(process.cwd(), "static", "robots.txt"), "utf8");
+  assert.match(robots, /^User-agent: \*$/m);
+  assert.match(robots, /^Allow: \/$/m);
+});

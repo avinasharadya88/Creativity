@@ -65,6 +65,6 @@ Network deployments require `API_WRITE_TOKEN` for writes. Localhost development 
 
 ## Build and deployment
 
-`npm run build` bundles the server to `dist/server.js` as ESM. `npm start` runs that bundle. Cloud Run sets `K_SERVICE`, so the server listens on `0.0.0.0:$PORT`; local runs default to `127.0.0.1:3000`.
+`npm run build` bundles the server to `dist/server.js` as ESM. `npm start` runs that bundle. The server honors `PORT` and defaults to `0.0.0.0`, as required by Cloud Run. Operators can set `HOST=127.0.0.1` for loopback-only local development. This startup behavior does not depend on optional platform-identification variables.
 
 The runtime data directory must point to durable storage in deployments where edits must survive instance replacement.

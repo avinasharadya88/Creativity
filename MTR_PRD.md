@@ -43,8 +43,8 @@ At narrower desktop sizes, secondary map labels may be hidden to preserve the wo
 
 ## Security and operational requirements
 
-- Local development binds to `127.0.0.1` unless the operator changes `HOST`.
-- Cloud Run binds to `0.0.0.0:$PORT` when `K_SERVICE` is present.
+- The service honors `PORT` and defaults to `0.0.0.0`, as required by Cloud Run.
+- Local development can be restricted to loopback with `HOST=127.0.0.1`.
 - Network deployments disable writes until `API_WRITE_TOKEN` is configured.
 - The server accepts no more than 30 write requests per client address per minute.
 - Request bodies are limited to one megabyte.
